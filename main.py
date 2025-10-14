@@ -1,7 +1,7 @@
 from pico2d import *
 
 
-characterjob = 'Wizard'
+characterjob = ' '
 
 class Character:
     image = None
@@ -32,6 +32,21 @@ class Character:
         pass
 
 
+def show_character_selection():
+    global characterjob
+    global character_select
+    event_list = get_events()
+    for event in event_list:
+        if event.type == SDL_KEYDOWN and event.key == SDLK_1:
+            characterjob = 'Swordsman'
+            character_select = False
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
+            characterjob = 'Archer'
+            character_select = False
+        elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
+            characterjob = 'Wizard'
+            character_select = False
+    pass
 
 def handle_events():
     global running
@@ -67,9 +82,10 @@ def render_world():
     update_canvas()
 
 running = True
-
+character_select = True
 open_canvas()
-
+while character_select:
+    show_character_selection()
 reset_world()
 while running:
     handle_events()
