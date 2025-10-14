@@ -1,6 +1,14 @@
 from pico2d import *
 
 
+class Character:
+    def __init__(self):
+        pass
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
 
 
 def handle_events():
@@ -15,7 +23,11 @@ def handle_events():
 
 def reset_world():
     global world
+    global characters
     world = []
+
+    characters = Character()
+    world.append(characters)
 
 
 
