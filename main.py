@@ -1,7 +1,7 @@
 from pico2d import *
 
 
-characterjob = 'Archer'
+characterjob = 'Wizard'
 
 class Character:
     image = None
@@ -13,12 +13,16 @@ class Character:
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
             Character.image = load_image('Archer/Idle.png')
+        elif Character.image is None and characterjob == 'Wizard':
+            Character.image = load_image('Wizard/Idle.png')
 
         pass
     def update(self):
         if characterjob == 'Swordsman':
             self.frame = (self.frame + 1) % 8
         elif characterjob == 'Archer':
+            self.frame = (self.frame + 1) % 6
+        elif characterjob == 'Wizard':
             self.frame = (self.frame + 1) % 6
 
         pass
