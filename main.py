@@ -2,12 +2,19 @@ from pico2d import *
 
 
 class Character:
+    image = None
     def __init__(self):
+        self.x, self.y = 400, 400
+        self.frame = 0
+        if Character.image is None:
+            Character.image = load_image('Swordsman/Idle.png')
         pass
     def update(self):
+        self.frame = (self.frame + 1) % 8
         pass
 
     def draw(self):
+        self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
 
 
@@ -50,5 +57,5 @@ while running:
     handle_events()
     update_world()
     render_world()
-    delay(0.01)
+    delay(0.1)
 close_canvas()
