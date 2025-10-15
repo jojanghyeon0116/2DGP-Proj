@@ -5,7 +5,6 @@ characterjob = ' '
 
 class Character:
     image = None
-
     def __init__(self):
         self.x, self.y = 400, 400
         self.frame = 0
@@ -24,15 +23,26 @@ class Character:
         if characterjob == 'Swordsman':
             self.frame = (self.frame + 1) % 8
         elif characterjob == 'Archer':
-            self.frame = (self.frame + 1) % 6
+            if self.direction_x == 0:
+                self.frame = (self.frame + 1) % 6
+            else:
+                self.frame = (self.frame + 1) % 8
         elif characterjob == 'Wizard':
-            self.frame = (self.frame + 1) % 6
+            if self.direction_x == 0:
+                self.frame = (self.frame + 1) % 6
+            else:
+                self.frame = (self.frame + 1) % 8
         self.x += self.direction_x * 5
 
         pass
 
     def draw(self):
-        self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
+        if self.direction_x == 1:
+            self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
+        elif self.direction_x == -1:
+            self.image.clip_composite_draw(self.frame * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
+        else:  # 정지 상태 (마지막 이동 방향에 따라)
+            self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
 
 
@@ -62,13 +72,21 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
+                if (characters.direction_x == 0):
+                    characters.image = load_image(f'{characterjob}/Run.png')
                 characters.direction_x = 1
             elif event.key == SDLK_LEFT:
+                if (characters.direction_x == 0):
+                    characters.image = load_image(f'{characterjob}/Run.png')
                 characters.direction_x = -1
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
+                if(characters.direction_x == 1):
+                    characters.image = load_image(f'{characterjob}/Idle.png')
                 characters.direction_x = 0
             elif event.key == SDLK_LEFT:
+                if(characters.direction_x == -1):
+                    characters.image = load_image(f'{characterjob}/Idle.png')
                 characters.direction_x = 0
 
 
