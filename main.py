@@ -9,6 +9,9 @@ class Character:
     def __init__(self):
         self.x, self.y = 400, 400
         self.frame = 0
+        self.direction_x = 0
+        self.direction_y = 0
+        self.direction = 0
         if Character.image is None and characterjob == 'Swordsman':
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
@@ -24,6 +27,7 @@ class Character:
             self.frame = (self.frame + 1) % 6
         elif characterjob == 'Wizard':
             self.frame = (self.frame + 1) % 6
+        self.x += self.direction_x * 5
 
         pass
 
@@ -56,6 +60,16 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
+        elif event.type == SDL_KEYDOWN:
+            if event.key == SDLK_RIGHT:
+                characters.direction_x = 1
+            elif event.key == SDLK_LEFT:
+                characters.direction_x = -1
+        elif event.type == SDL_KEYUP:
+            if event.key == SDLK_RIGHT:
+                characters.direction_x = 0
+            elif event.key == SDLK_LEFT:
+                characters.direction_x = 0
 
 
 
