@@ -11,6 +11,7 @@ class Character:
         self.direction_x = 0
         self.direction_y = 0
         self.direction = 0
+        self.move = False
         if Character.image is None and characterjob == 'Swordsman':
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
@@ -23,12 +24,12 @@ class Character:
         if characterjob == 'Swordsman':
             self.frame = (self.frame + 1) % 8
         elif characterjob == 'Archer':
-            if self.direction_x == 0:
+            if not characters.move:
                 self.frame = (self.frame + 1) % 6
             else:
                 self.frame = (self.frame + 1) % 8
         elif characterjob == 'Wizard':
-            if self.direction_x == 0:
+            if not characters.move:
                 self.frame = (self.frame + 1) % 6
             else:
                 self.frame = (self.frame + 1) % 8
@@ -75,19 +76,23 @@ def handle_events():
                 if (characters.direction_x == 0):
                     characters.image = load_image(f'{characterjob}/Run.png')
                 characters.direction_x = 1
+                characters.move = True
             elif event.key == SDLK_LEFT:
                 if (characters.direction_x == 0):
                     characters.image = load_image(f'{characterjob}/Run.png')
                 characters.direction_x = -1
+                characters.move = True
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 if(characters.direction_x == 1):
                     characters.image = load_image(f'{characterjob}/Idle.png')
                 characters.direction_x = 0
+                characters.move = False
             elif event.key == SDLK_LEFT:
                 if(characters.direction_x == -1):
                     characters.image = load_image(f'{characterjob}/Idle.png')
                 characters.direction_x = 0
+                characters.move = False
 
 
 
