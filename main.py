@@ -12,6 +12,8 @@ class Character:
         self.direction_y = 0
         self.direction = 0
         self.move = False
+        self.jumping = False  # 점프 중인지 여부
+
         if Character.image is None and characterjob == 'Swordsman':
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
@@ -33,8 +35,17 @@ class Character:
                 self.frame = (self.frame + 1) % 6
             else:
                 self.frame = (self.frame + 1) % 8
-        self.x += self.direction_x * 5
-
+        self.x += self.direction_x * 10
+        if self.jumping:
+            self.y += self.direction_y * 10
+            if self.y >= 440:  # 최고점 도달
+                self.direction_y = -1  # 하강 시작
+            if self.y <= 400:  # 바닥 도달
+                self.jumping = False
+                self.y = 400
+                self.direction_y = 0
+                self.image = load_image(f'{characterjob}/Idle.png')
+                self.move = False
         pass
 
     def draw(self):
@@ -73,25 +84,34 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_RIGHT:
-                if (characters.direction_x == 0):
+                if characters.direction_x == 0:
                     characters.image = load_image(f'{characterjob}/Run.png')
                 characters.direction_x = 1
                 characters.move = True
             elif event.key == SDLK_LEFT:
-                if (characters.direction_x == 0):
+                if characters.direction_x == 0:
                     characters.image = load_image(f'{characterjob}/Run.png')
                 characters.direction_x = -1
                 characters.move = True
+            elif event.key == SDLK_SPACE:
+                if not characters.jumping:  # 점프 중이 아닐 때만 점프 가능
+                    characters.image = load_image(f'{characterjob}/Jump.png')
+                    characters.direction_y = 1
+                    characters.jumping = True
+                    characters.move = True
+                    characters.frame = 0
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
-                if(characters.direction_x == 1):
+                if characters.direction_x == 1:
                     characters.image = load_image(f'{characterjob}/Idle.png')
                 characters.direction_x = 0
                 characters.move = False
             elif event.key == SDLK_LEFT:
-                if(characters.direction_x == -1):
+                if characters.direction_x == -1:
                     characters.image = load_image(f'{characterjob}/Idle.png')
                 characters.direction_x = 0
+                characters.move = False
+            elif event.key == SDLK_SPACE:
                 characters.move = False
 
 
