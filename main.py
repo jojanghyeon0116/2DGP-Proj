@@ -14,6 +14,7 @@ class Character:
         self.move = False
         self.jumping = False  # 점프 중인지 여부
         self.hurt = False
+        self.hp = 0
         if Character.image is None and characterjob == 'Swordsman':
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
@@ -23,22 +24,24 @@ class Character:
 
         pass
     def update(self):
+        if self.hp <= 0:
+            characters.image = load_image(f'{characterjob}/Dead.png')
         if characterjob == 'Swordsman':
-            if self.hurt:
+            if self.hurt or self.hp <= 0:
                 self.frame = (self.frame + 1) % 3
             else:
                 self.frame = (self.frame + 1) % 8
         elif characterjob == 'Archer':
             if not characters.move and not self.hurt:
                 self.frame = (self.frame + 1) % 6
-            elif self.hurt:
+            elif self.hurt or self.hp <= 0:
                 self.frame = (self.frame + 1) % 3
             else:
                 self.frame = (self.frame + 1) % 8
         elif characterjob == 'Wizard':
             if not characters.move and not self.hurt:
                 self.frame = (self.frame + 1) % 6
-            elif self.hurt:
+            elif self.hurt or self.hp <= 0:
                 self.frame = (self.frame + 1) % 4
             else:
                 self.frame = (self.frame + 1) % 8
