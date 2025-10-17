@@ -13,7 +13,7 @@ class Character:
         self.direction = 0
         self.move = False
         self.jumping = False  # 점프 중인지 여부
-
+        self.hurt = False
         if Character.image is None and characterjob == 'Swordsman':
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
@@ -24,15 +24,22 @@ class Character:
         pass
     def update(self):
         if characterjob == 'Swordsman':
-            self.frame = (self.frame + 1) % 8
+            if self.hurt:
+                self.frame = (self.frame + 1) % 3
+            else:
+                self.frame = (self.frame + 1) % 8
         elif characterjob == 'Archer':
-            if not characters.move:
+            if not characters.move and not self.hurt:
                 self.frame = (self.frame + 1) % 6
+            elif self.hurt:
+                self.frame = (self.frame + 1) % 3
             else:
                 self.frame = (self.frame + 1) % 8
         elif characterjob == 'Wizard':
-            if not characters.move:
+            if not characters.move and not self.hurt:
                 self.frame = (self.frame + 1) % 6
+            elif self.hurt:
+                self.frame = (self.frame + 1) % 4
             else:
                 self.frame = (self.frame + 1) % 8
         self.x += self.direction_x * 10
@@ -100,6 +107,10 @@ def handle_events():
                     characters.jumping = True
                     characters.move = True
                     characters.frame = 0
+            elif event.key == SDLK_g:
+                characters.hurt = True
+                characters.image = load_image(f'{characterjob}/Hurt.png')
+                characters.frame = 0
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 if characters.direction_x == 1:
