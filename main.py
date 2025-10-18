@@ -1,6 +1,15 @@
 from pico2d import *
 
-
+CHARACTER_POSITIONS = {
+    # Swordsman 영역 (예시: x=100 ~ 300)
+    'Swordsman': (50, 300),
+    # Wizard 영역 (예시: x=350 ~ 550)
+    'Wizard': (300, 550),
+    # Archer 영역 (예시: x=600 ~ 800)
+    'Archer': (550, 800)
+}
+# 캐릭터들의 Y축 범위는 캔버스 중앙 근처 (851px 기준, 예를 들어 y=400 ~ 500)
+CHARACTER_Y_RANGE = (200, 500)
 characterjob = ' '
 
 class Character:
@@ -84,15 +93,35 @@ def show_character_selection():
     update_canvas()
     event_list = get_events()
     for event in event_list:
-        if event.type == SDL_KEYDOWN and event.key == SDLK_1:
-            characterjob = 'Swordsman'
+        if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
+            global running
+            running = False
             character_select = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_2:
-            characterjob = 'Archer'
-            character_select = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_3:
-            characterjob = 'Wizard'
-            character_select = False
+
+        # 마우스 이벤트 처리
+        elif event.type == SDL_MOUSEBUTTONDOWN:
+            if event.button == SDL_BUTTON_LEFT:
+                # Y좌표 변환 (Pico2D 좌하단 (0,0) 기준)
+                mouse_x, mouse_y = event.x, 800 - 1 - event.y
+
+                # Y축 범위 내에 있는지 확인
+                if CHARACTER_Y_RANGE[0] <= mouse_y <= CHARACTER_Y_RANGE[1]:
+
+                    # 1. Swordsman 선택 영역 확인
+                    if CHARACTER_POSITIONS['Swordsman'][0] <= mouse_x <= CHARACTER_POSITIONS['Swordsman'][1]:
+                        characterjob = 'Swordsman'
+                        character_select = False
+
+                    # 2. Wizard 선택 영역 확인
+                    elif CHARACTER_POSITIONS['Wizard'][0] <= mouse_x <= CHARACTER_POSITIONS['Wizard'][1]:
+                        characterjob = 'Wizard'
+                        character_select = False
+
+                    # 3. Archer 선택 영역 확인
+                    elif CHARACTER_POSITIONS['Archer'][0] <= mouse_x <= CHARACTER_POSITIONS['Archer'][1]:
+                        characterjob = 'Archer'
+                        character_select = False
+
     pass
 
 def handle_events():
@@ -165,7 +194,7 @@ def render_world():
 
 running = True
 character_select = True
-open_canvas()
+open_canvas(800,851)
 while character_select:
     show_character_selection()
 reset_world()
