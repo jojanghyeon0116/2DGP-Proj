@@ -67,10 +67,21 @@ class Character:
             self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
 
+selection_image = None
+def load_selection_image():
+    global selection_image
+    if selection_image is None:
+        selection_image = load_image('character_select.png')
 
 def show_character_selection():
     global characterjob
     global character_select
+    global selection_image
+    load_selection_image()
+    clear_canvas()
+    if selection_image:
+        selection_image.draw(800 // 2, 851 // 2)
+    update_canvas()
     event_list = get_events()
     for event in event_list:
         if event.type == SDL_KEYDOWN and event.key == SDLK_1:
