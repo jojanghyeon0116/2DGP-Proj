@@ -23,7 +23,8 @@ class Character:
         self.move = False
         self.jumping = False  # 점프 중인지 여부
         self.hurt = False
-        self.hp = 0
+        self.attacking = False
+        self.hp = 100
         if Character.image is None and characterjob == 'Swordsman':
             Character.image = load_image('Swordsman/Idle.png')
         elif Character.image is None and characterjob == 'Archer':
@@ -33,6 +34,19 @@ class Character:
 
         pass
     def update(self):
+        if self.attacking:
+            # 캐릭터별 공격 프레임 수
+            attack_frames = {'Swordsman': 4, 'Archer': 14, 'Wizard': 4}  # 예시 프레임 수, 실제 이미지에 맞게 조정 필요
+            max_frames = attack_frames.get(characterjob, 4)  # 기본값 4
+
+            self.frame = (self.frame + 1)
+            if self.frame >= max_frames:
+                self.attacking = False  # 공격 애니메이션 종료
+                self.frame = 0
+                self.image = load_image(f'{characterjob}/Idle.png')  # 대기 상태로 복귀
+
+            # 공격 중에는 이동/점프/피격 애니메이션 업데이트를 스킵
+            return
         if self.hp <= 0:
             characters.image = load_image(f'{characterjob}/Dead.png')
         if characterjob == 'Swordsman':
@@ -133,27 +147,33 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_RIGHT:
-                if characters.direction_x == 0:
-                    characters.image = load_image(f'{characterjob}/Run.png')
-                characters.direction_x = 1
-                characters.move = True
-            elif event.key == SDLK_LEFT:
-                if characters.direction_x == 0:
-                    characters.image = load_image(f'{characterjob}/Run.png')
-                characters.direction_x = -1
-                characters.move = True
-            elif event.key == SDLK_SPACE:
-                if not characters.jumping:  # 점프 중이 아닐 때만 점프 가능
-                    characters.image = load_image(f'{characterjob}/Jump.png')
-                    characters.direction_y = 1
-                    characters.jumping = True
-                    characters.move = True
+            if event.key == SDLK_LCTRL:
+                if not characters.attacking and not characters.jumping and not characters.hurt and characters.hp > 0:
+                    characters.attacking = True
+                    characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
                     characters.frame = 0
-            elif event.key == SDLK_g:
-                characters.hurt = True
-                characters.image = load_image(f'{characterjob}/Hurt.png')
-                characters.frame = 0
+            if not characters.attacking:
+                if event.key == SDLK_RIGHT:
+                    if characters.direction_x == 0:
+                        characters.image = load_image(f'{characterjob}/Run.png')
+                    characters.direction_x = 1
+                    characters.move = True
+                elif event.key == SDLK_LEFT:
+                    if characters.direction_x == 0:
+                        characters.image = load_image(f'{characterjob}/Run.png')
+                    characters.direction_x = -1
+                    characters.move = True
+                elif event.key == SDLK_SPACE:
+                    if not characters.jumping:  # 점프 중이 아닐 때만 점프 가능
+                        characters.image = load_image(f'{characterjob}/Jump.png')
+                        characters.direction_y = 1
+                        characters.jumping = True
+                        characters.move = True
+                        characters.frame = 0
+                elif event.key == SDLK_g:
+                    characters.hurt = True
+                    characters.image = load_image(f'{characterjob}/Hurt.png')
+                    characters.frame = 0
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 if characters.direction_x == 1:
