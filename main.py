@@ -89,6 +89,13 @@ class Character:
         else:  # 정지 상태 (마지막 이동 방향에 따라)
             self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
+class skill_effect:
+    def __init__(self):
+        pass
+    def update(self):
+        pass
+    def draw(self):
+        pass
 
 selection_image = None
 def load_selection_image():
@@ -193,11 +200,14 @@ def handle_events():
 def reset_world():
     global world
     global characters
+    global skill_effect
     world = []
 
     characters = Character()
     world.append(characters)
-
+    skill_effect = skill_effect()
+    world.append(skill_effect)
+    pass
 
 
 def update_world():
