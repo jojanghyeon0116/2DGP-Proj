@@ -89,8 +89,14 @@ class Character:
         else:  # 정지 상태 (마지막 이동 방향에 따라)
             self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
+
 class skill_effect:
+    image = None
     def __init__(self):
+        self.x, self.y = 0, 0
+        self.is_playing = False
+        if skill_effect.image is None:
+            skill_effect.image = load_image('skill_effects.png')
         pass
     def update(self):
         pass
