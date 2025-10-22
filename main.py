@@ -98,6 +98,12 @@ class skill_effect:
         if skill_effect.image is None:
             skill_effect.image = load_image('skill_effects.png')
         pass
+
+    def start_effect(self, target_x, target_y):
+        self.x = target_x
+        self.y = target_y
+        self.is_playing = True
+
     def update(self):
         pass
     def draw(self):
