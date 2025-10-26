@@ -99,6 +99,7 @@ class skill_effect:
         self.x, self.y = 0, 0
         self.frame = 0
         self.move_count = 0
+        self.image = None
         pass
 
     def start_effect(self, target_x, target_y):
@@ -141,8 +142,12 @@ class skill_effect:
                 self.frame = (self.frame + 1) % 3
                 self.x += 10
         if self.Skill_z:
-            self.frame = (self.frame + 1) % 4
-            self.x += 10
+            if characterjob == 'Swordsman':
+                self.frame = (self.frame + 1) % 4
+                self.x += 10
+            elif characterjob == 'Wizard':
+                self.frame = (self.frame + 1) % 3
+                self.x += 10
         pass
 
     def draw(self):
@@ -159,7 +164,10 @@ class skill_effect:
                 self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 50,50)
 
         elif self.Skill_z:
-            self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
+            if characterjob == 'Swordsman':
+                self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
+            elif characterjob == 'Wizard':
+                self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 70,70)
         pass
 
 selection_image = None
