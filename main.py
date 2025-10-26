@@ -89,13 +89,14 @@ class Character:
         else:  # 정지 상태 (마지막 이동 방향에 따라)
             self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
-Skill_c = False
+
 class skill_effect:
-    global Skill_c
+    Skill_c = False
     image = None
     def __init__(self):
         self.x, self.y = 0, 0
         self.frame = 0
+        self.move_count = 0
         pass
 
     def start_effect(self, target_x, target_y):
@@ -103,16 +104,25 @@ class skill_effect:
         self.y = target_y
 
     def update(self):
-        skill_offset = 40
-        target_x = characters.x + (skill_offset if characters.direction == 0 else -skill_offset)
-        target_y = characters.y - 20
+        if self.Skill_c:
+            skill_offset = 40
+            target_x = characters.x + (skill_offset if characters.direction == 0 else -skill_offset)
+            target_y = characters.y - 20
 
-        self.start_effect(target_x, target_y)
-        self.frame = (self.frame + 1) % 3
+            self.start_effect(target_x, target_y)
+            self.frame = (self.frame + 1) % 3
+            self.move_count += characters.direction_x * 5
+            characters.x += characters.direction_x * 5
+        if self.move_count >= 30:
+            self.Skill_c = False
+            self.move_count = 0
+            self.frame = 0
+            characters.direction_x = 0
+            characters.image = load_image(f'{characterjob}/Idle.png')
         pass
 
     def draw(self):
-        if Skill_c:
+        if self.Skill_c:
             self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
         pass
 
@@ -201,9 +211,10 @@ def handle_events():
                     characters.image = load_image(f'{characterjob}/Hurt.png')
                     characters.frame = 0
                 elif event.key == SDLK_c:
-                    global Skill_c
-                    Skill_c = True
+                    skill_effect.Skill_c = True
                     skill_effect.image = load_image(f'{characterjob}/Skill1.png')
+                    characters.image = load_image(f'{characterjob}/Run.png')
+                    characters.direction_x = 1
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 if characters.direction_x == 1:
