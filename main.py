@@ -89,25 +89,31 @@ class Character:
         else:  # 정지 상태 (마지막 이동 방향에 따라)
             self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
-
+Skill_c = False
 class skill_effect:
+    global Skill_c
     image = None
     def __init__(self):
         self.x, self.y = 0, 0
-        self.is_playing = False
-        if skill_effect.image is None:
-            skill_effect.image = load_image('skill_effects.png')
+        self.frame = 0
         pass
 
     def start_effect(self, target_x, target_y):
         self.x = target_x
         self.y = target_y
-        self.is_playing = True
 
     def update(self):
+        skill_offset = 40
+        target_x = characters.x + (skill_offset if characters.direction == 0 else -skill_offset)
+        target_y = characters.y - 20
+
+        self.start_effect(target_x, target_y)
+        self.frame = (self.frame + 1) % 3
         pass
 
     def draw(self):
+        if Skill_c:
+            self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
         pass
 
 selection_image = None
@@ -194,6 +200,10 @@ def handle_events():
                     characters.hurt = True
                     characters.image = load_image(f'{characterjob}/Hurt.png')
                     characters.frame = 0
+                elif event.key == SDLK_c:
+                    global Skill_c
+                    Skill_c = True
+                    skill_effect.image = load_image(f'{characterjob}/Skill1.png')
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 if characters.direction_x == 1:
