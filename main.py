@@ -92,6 +92,7 @@ class Character:
 
 class skill_effect:
     Skill_c = False
+    Skill_x = False
     image = None
     def __init__(self):
         self.x, self.y = 0, 0
@@ -119,11 +120,21 @@ class skill_effect:
             self.frame = 0
             characters.direction_x = 0
             characters.image = load_image(f'{characterjob}/Idle.png')
+
+        if self.Skill_x:
+            skill_offset = 40
+            target_y = characters.y + skill_offset
+            target_x = characters.x
+
+            self.start_effect(target_x, target_y)
+            self.frame = (self.frame + 1) % 5
         pass
 
     def draw(self):
         if self.Skill_c:
             self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
+        elif self.Skill_x:
+            self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75,75)
         pass
 
 selection_image = None
@@ -215,6 +226,10 @@ def handle_events():
                     skill_effect.image = load_image(f'{characterjob}/Skill1.png')
                     characters.image = load_image(f'{characterjob}/Run.png')
                     characters.direction_x = 1
+                elif event.key == SDLK_x:
+                    skill_effect.Skill_x = True
+                    skill_effect.image = load_image(f'{characterjob}/Skill2.png')
+
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
                 if characters.direction_x == 1:
