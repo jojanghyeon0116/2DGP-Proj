@@ -256,21 +256,29 @@ def handle_events():
                     characters.frame = 0
                 elif event.key == SDLK_c:
                     skill_effect.Skill_c = True
+                    skill_effect.Skill_z = False
+                    skill_effect.Skill_y = False
                     skill_effect.image = load_image(f'{characterjob}/Skill1.png')
                     if characterjob == 'Swordsman':
                         characters.image = load_image(f'{characterjob}/Run.png')
                         characters.direction_x = 1
+                        skill_effect.x = characters.x + 50
+                        skill_effect.y = characters.y - 20
                     else:
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
                 elif event.key == SDLK_x:
                     skill_effect.image = load_image(f'{characterjob}/Skill2.png')
                     skill_effect.Skill_x = True
+                    skill_effect.Skill_y = False
+                    skill_effect.Skill_c = False
                     if characterjob == 'Wizard':
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
                 elif event.key == SDLK_z:
                     skill_effect.Skill_z = True
+                    skill_effect.Skill_x = False
+                    skill_effect.Skill_c = False
                     skill_effect.image = load_image(f'{characterjob}/Skill3.png')
                     skill_effect.x = characters.x + 50
                     skill_effect.y = characters.y - 20
