@@ -127,7 +127,10 @@ class skill_effect:
             target_x = characters.x
 
             self.start_effect(target_x, target_y)
-            self.frame = (self.frame + 1) % 5
+            self.frame = self.frame + 1
+            if self.frame >= 5:
+                self.Skill_x = False
+                self.frame = 0
         pass
 
     def draw(self):
