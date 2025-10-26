@@ -93,6 +93,7 @@ class Character:
 class skill_effect:
     Skill_c = False
     Skill_x = False
+    Skill_z = False
     image = None
     def __init__(self):
         self.x, self.y = 0, 0
@@ -131,6 +132,9 @@ class skill_effect:
             if self.frame >= 5:
                 self.Skill_x = False
                 self.frame = 0
+        if self.Skill_z:
+            self.frame = (self.frame + 1) % 4
+            self.x += 10
         pass
 
     def draw(self):
@@ -138,6 +142,8 @@ class skill_effect:
             self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
         elif self.Skill_x:
             self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75,75)
+        elif self.Skill_z:
+            self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
         pass
 
 selection_image = None
@@ -232,6 +238,14 @@ def handle_events():
                 elif event.key == SDLK_x:
                     skill_effect.Skill_x = True
                     skill_effect.image = load_image(f'{characterjob}/Skill2.png')
+                elif event.key == SDLK_z:
+                    skill_effect.Skill_z = True
+                    skill_effect.image = load_image(f'{characterjob}/Skill3.png')
+                    skill_effect.x = characters.x + 50
+                    skill_effect.y = characters.y - 20
+                    characters.attacking = True
+                    characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
+                    characters.frame = 0
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_RIGHT:
