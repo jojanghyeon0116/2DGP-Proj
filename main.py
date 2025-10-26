@@ -127,15 +127,19 @@ class skill_effect:
             characters.image = load_image(f'{characterjob}/Idle.png')
 
         if self.Skill_x:
-            skill_offset = 40
-            target_y = characters.y + skill_offset
-            target_x = characters.x
+            if characterjob == 'Swordsman':
+                skill_offset = 40
+                target_y = characters.y + skill_offset
+                target_x = characters.x
 
-            self.start_effect(target_x, target_y)
-            self.frame = self.frame + 1
-            if self.frame >= 5:
-                self.Skill_x = False
-                self.frame = 0
+                self.start_effect(target_x, target_y)
+                self.frame = self.frame + 1
+                if self.frame >= 5:
+                    self.Skill_x = False
+                    self.frame = 0
+            elif characterjob == 'Wizard':
+                self.frame = (self.frame + 1) % 3
+                self.x += 10
         if self.Skill_z:
             self.frame = (self.frame + 1) % 4
             self.x += 10
@@ -149,7 +153,11 @@ class skill_effect:
                 self.image.clip_draw(self.frame * 34, 0, 34, 36, self.x, self.y, 30,30)
 
         elif self.Skill_x:
-            self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75,75)
+            if characterjob == 'Swordsman':
+                self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75,75)
+            elif characterjob == 'Wizard':
+                self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 50,50)
+
         elif self.Skill_z:
             self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
         pass
@@ -248,8 +256,11 @@ def handle_events():
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
                 elif event.key == SDLK_x:
-                    skill_effect.Skill_x = True
                     skill_effect.image = load_image(f'{characterjob}/Skill2.png')
+                    skill_effect.Skill_x = True
+                    if characterjob == 'Wizard':
+                        skill_effect.x = characters.x + 50
+                        skill_effect.y = characters.y - 20
                 elif event.key == SDLK_z:
                     skill_effect.Skill_z = True
                     skill_effect.image = load_image(f'{characterjob}/Skill3.png')
