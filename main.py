@@ -276,12 +276,16 @@ def handle_events():
                     skill_effect.image = load_image(f'{characterjob}/Skill1.png')
                     if characterjob == 'Swordsman':
                         characters.image = load_image(f'{characterjob}/Run.png')
+                        characters.frame = 0
                         characters.direction_x = 1
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
                     else:
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
+                        characters.attacking = True
+                        characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
+                        characters.frame = 0
                 elif event.key == SDLK_x:
                     skill_effect.image = load_image(f'{characterjob}/Skill2.png')
                     skill_effect.Skill_x = True
@@ -290,9 +294,15 @@ def handle_events():
                     if characterjob == 'Wizard':
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
+                        characters.attacking = True
+                        characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
+                        characters.frame = 0
                     elif characterjob == 'Archer':
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
+                        characters.attacking = True
+                        characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
+                        characters.frame = 0
                 elif event.key == SDLK_z:
                     skill_effect.Skill_z = True
                     skill_effect.Skill_x = False
