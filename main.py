@@ -154,6 +154,9 @@ class skill_effect:
             elif characterjob == 'Wizard':
                 self.frame = (self.frame + 1) % 3
                 self.x += 10
+            elif characterjob == 'Archer':
+                self.frame = (self.frame + 1) % 6
+                self.x += 10
         pass
 
     def draw(self):
@@ -178,6 +181,8 @@ class skill_effect:
                 self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
             elif characterjob == 'Wizard':
                 self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 70,70)
+            elif characterjob == 'Archer':
+                self.image.clip_draw(self.frame * 170 ,0, 170, 200, self.x, self.y, 70,70)
         pass
 
 selection_image = None
