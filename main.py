@@ -144,6 +144,9 @@ class skill_effect:
             elif characterjob == 'Wizard':
                 self.frame = (self.frame + 1) % 3
                 self.x += 10
+            elif characterjob == 'Archer':
+                self.frame = (self.frame + 1) % 6
+                self.x += 10
         if self.Skill_z:
             if characterjob == 'Swordsman':
                 self.frame = (self.frame + 1) % 4
@@ -167,6 +170,8 @@ class skill_effect:
                 self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75,75)
             elif characterjob == 'Wizard':
                 self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 50,50)
+            elif characterjob == 'Archer':
+                self.image.clip_draw(self.frame * 170 ,0, 170, 290, self.x, self.y, 100,100)
 
         elif self.Skill_z:
             if characterjob == 'Swordsman':
@@ -278,6 +283,9 @@ def handle_events():
                     skill_effect.Skill_y = False
                     skill_effect.Skill_c = False
                     if characterjob == 'Wizard':
+                        skill_effect.x = characters.x + 50
+                        skill_effect.y = characters.y - 20
+                    elif characterjob == 'Archer':
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
                 elif event.key == SDLK_z:
