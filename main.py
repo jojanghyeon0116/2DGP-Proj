@@ -120,6 +120,9 @@ class skill_effect:
             elif characterjob == 'Wizard':
                 self.frame = (self.frame + 1) % 3
                 self.x += 10
+            elif characterjob == 'Archer':
+                self.frame = (self.frame + 1) % 4
+                self.x += 10
         if self.move_count >= 30:
             self.Skill_c = False
             self.move_count = 0
@@ -156,6 +159,8 @@ class skill_effect:
                 self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
             elif characterjob == 'Wizard':
                 self.image.clip_draw(self.frame * 34, 0, 34, 36, self.x, self.y, 30,30)
+            elif characterjob == 'Archer':
+                self.image.clip_draw(self.frame * 33, 0, 33, 32, self.x, self.y, 50,50)
 
         elif self.Skill_x:
             if characterjob == 'Swordsman':
