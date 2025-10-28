@@ -328,18 +328,29 @@ def handle_events():
             elif event.key == SDLK_SPACE:
                 characters.move = False
 
+class monster:
+    def __init__(self):
+        pass
 
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
 
 def reset_world():
     global world
     global characters
     global skill_effect
+    global monster
     world = []
 
     characters = Character()
     world.append(characters)
     skill_effect = skill_effect()
     world.append(skill_effect)
+    monster = monster()
+    world.append(monster)
     pass
 
 
