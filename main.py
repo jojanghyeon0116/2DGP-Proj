@@ -329,13 +329,20 @@ def handle_events():
                 characters.move = False
 
 class monster:
+    image = None
     def __init__(self):
+        self.x, self.y = 500, 400
+        self.frame = 0
+        if monster.image is None:
+            monster.image = load_image('monster/Zombie_Small.png')
         pass
 
     def update(self):
+        self.frame = (self.frame + 1) % 4
         pass
 
     def draw(self):
+        self.image.clip_draw(self.frame * 32, 64, 32, 32, self.x, self.y, 100, 100)
         pass
 
 def reset_world():
