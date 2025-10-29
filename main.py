@@ -339,6 +339,13 @@ class monster:
 
     def update(self):
         self.frame = (self.frame + 1) % 4
+        distance_x = characters.x - self.x
+
+        if abs(distance_x) < 100:
+            if distance_x > 0:
+                self.x += 5
+            elif distance_x < 0:
+                self.x -= 5
         pass
 
     def draw(self):
