@@ -334,6 +334,7 @@ class monster:
         self.x, self.y = 500, 400
         self.frame = 0
         self.attacking = False
+        self.walking = False
         if monster.image is None:
             monster.image = load_image('Skeleton/Idle.png')
         pass
@@ -342,14 +343,25 @@ class monster:
         self.frame = (self.frame + 1) % 7
         distance_x = characters.x - self.x
 
-        if abs(distance_x) < 100:
+        if abs(distance_x) < 100 and not self.walking:
+            self.walking = True
+            self.image = load_image('Skeleton/Run.png')
+        elif abs(distance_x) >= 100 and self.walking:
+            self.walking = False
+            self.image = load_image('Skeleton/Idle.png')
+
+        if abs(distance_x) < 100 and self.walking:
             if distance_x > 0:
                 self.x += 5
             elif distance_x < 0:
                 self.x -= 5
+
         if abs(distance_x) < 50 and not self.attacking:
             self.attacking = True
             self.image = load_image('Skeleton/Attack_1.png')
+        elif abs(distance_x) >= 50 and self.attacking:
+            self.attacking = False
+            self.image = load_image('Skeleton/Run.png')
         pass
 
     def draw(self):
