@@ -335,6 +335,7 @@ class monster:
         self.frame = 0
         self.attacking = False
         self.walking = False
+        self.direction = 0
         if monster.image is None:
             monster.image = load_image('Skeleton/Idle.png')
         pass
@@ -342,6 +343,10 @@ class monster:
     def update(self):
         self.frame = (self.frame + 1) % 7
         distance_x = characters.x - self.x
+        if distance_x > 0:
+            self.direction = 1
+        elif distance_x < 0:
+            self.direction = -1
 
         if abs(distance_x) < 100 and not self.walking and not self.attacking:
             self.walking = True
@@ -366,7 +371,10 @@ class monster:
         pass
 
     def draw(self):
-        self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
+        if self.direction == 1:
+            self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
+        elif self.direction == -1:
+            self.image.clip_composite_draw(self.frame * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
         pass
 
 def reset_world():
