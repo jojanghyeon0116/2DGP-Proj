@@ -333,12 +333,13 @@ class monster:
     def __init__(self):
         self.x, self.y = 500, 400
         self.frame = 0
+        self.attacking = False
         if monster.image is None:
-            monster.image = load_image('monster/Zombie_Small.png')
+            monster.image = load_image('Skeleton/Idle.png')
         pass
 
     def update(self):
-        self.frame = (self.frame + 1) % 4
+        self.frame = (self.frame + 1) % 7
         distance_x = characters.x - self.x
 
         if abs(distance_x) < 100:
@@ -346,10 +347,13 @@ class monster:
                 self.x += 5
             elif distance_x < 0:
                 self.x -= 5
+        if abs(distance_x) < 50 and not self.attacking:
+            self.attacking = True
+            self.image = load_image('Skeleton/Attack_1.png')
         pass
 
     def draw(self):
-        self.image.clip_draw(self.frame * 32, 64, 32, 32, self.x, self.y, 100, 100)
+        self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         pass
 
 def reset_world():
