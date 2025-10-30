@@ -343,7 +343,7 @@ class monster:
         self.frame = (self.frame + 1) % 7
         distance_x = characters.x - self.x
 
-        if abs(distance_x) < 100 and not self.walking:
+        if abs(distance_x) < 100 and not self.walking and not self.attacking:
             self.walking = True
             self.image = load_image('Skeleton/Run.png')
         elif abs(distance_x) >= 100 and self.walking:
@@ -358,6 +358,7 @@ class monster:
 
         if abs(distance_x) < 50 and not self.attacking:
             self.attacking = True
+            self.walking = False
             self.image = load_image('Skeleton/Attack_1.png')
         elif abs(distance_x) >= 50 and self.attacking:
             self.attacking = False
