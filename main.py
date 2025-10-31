@@ -1,4 +1,6 @@
 from pico2d import *
+import random
+
 
 CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
@@ -331,7 +333,7 @@ def handle_events():
 class monster:
     image = None
     def __init__(self):
-        self.x, self.y = 500, 400
+        self.x, self.y = random.randint(50, 750), 400
         self.frame = 0
         self.attacking = False
         self.walking = False
