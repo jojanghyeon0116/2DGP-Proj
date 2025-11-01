@@ -1,7 +1,9 @@
 from pico2d import *
 import random
 
+import Skill
 from Character import Character
+from Skill import skill_effect
 
 CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
@@ -13,102 +15,6 @@ CHARACTER_POSITIONS = {
 }
 # 캐릭터들의 Y축 범위는 캔버스 중앙 근처 (851px 기준, 예를 들어 y=400 ~ 500)
 CHARACTER_Y_RANGE = (200, 500)
-
-
-class skill_effect:
-    Skill_c = False
-    Skill_x = False
-    Skill_z = False
-    image = None
-    def __init__(self):
-        self.x, self.y = 0, 0
-        self.frame = 0
-        self.move_count = 0
-        self.image = None
-        pass
-
-    def start_effect(self, target_x, target_y):
-        self.x = target_x
-        self.y = target_y
-
-    def update(self):
-        if self.Skill_c:
-            if characterjob == 'Swordsman':
-                skill_offset = 40
-                target_x = characters.x + (skill_offset if characters.direction == 0 else -skill_offset)
-                target_y = characters.y - 20
-
-                self.start_effect(target_x, target_y)
-                self.frame = (self.frame + 1) % 3
-                self.move_count += characters.direction_x * 5
-                characters.x += characters.direction_x * 5
-            elif characterjob == 'Wizard':
-                self.frame = (self.frame + 1) % 3
-                self.x += 10
-            elif characterjob == 'Archer':
-                self.frame = (self.frame + 1) % 4
-                self.x += 10
-        if self.move_count >= 30:
-            self.Skill_c = False
-            self.move_count = 0
-            self.frame = 0
-            characters.direction_x = 0
-            characters.image = load_image(f'{characterjob}/Idle.png')
-
-        if self.Skill_x:
-            if characterjob == 'Swordsman':
-                skill_offset = 40
-                target_y = characters.y + skill_offset
-                target_x = characters.x
-
-                self.start_effect(target_x, target_y)
-                self.frame = self.frame + 1
-                if self.frame >= 5:
-                    self.Skill_x = False
-                    self.frame = 0
-            elif characterjob == 'Wizard':
-                self.frame = (self.frame + 1) % 3
-                self.x += 10
-            elif characterjob == 'Archer':
-                self.frame = (self.frame + 1) % 6
-                self.x += 10
-        if self.Skill_z:
-            if characterjob == 'Swordsman':
-                self.frame = (self.frame + 1) % 4
-                self.x += 10
-            elif characterjob == 'Wizard':
-                self.frame = (self.frame + 1) % 3
-                self.x += 10
-            elif characterjob == 'Archer':
-                self.frame = (self.frame + 1) % 6
-                self.x += 10
-        pass
-
-    def draw(self):
-        if self.Skill_c:
-            if characterjob == 'Swordsman':
-                self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
-            elif characterjob == 'Wizard':
-                self.image.clip_draw(self.frame * 34, 0, 34, 36, self.x, self.y, 30,30)
-            elif characterjob == 'Archer':
-                self.image.clip_draw(self.frame * 33, 0, 33, 32, self.x, self.y, 50,50)
-
-        elif self.Skill_x:
-            if characterjob == 'Swordsman':
-                self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75,75)
-            elif characterjob == 'Wizard':
-                self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 50,50)
-            elif characterjob == 'Archer':
-                self.image.clip_draw(self.frame * 170 ,0, 170, 290, self.x, self.y, 100,100)
-
-        elif self.Skill_z:
-            if characterjob == 'Swordsman':
-                self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
-            elif characterjob == 'Wizard':
-                self.image.clip_draw(self.frame * 341 ,0, 341, 284, self.x, self.y, 70,70)
-            elif characterjob == 'Archer':
-                self.image.clip_draw(self.frame * 170 ,0, 170, 200, self.x, self.y, 70,70)
-        pass
 
 selection_image = None
 def load_selection_image():
@@ -160,6 +66,7 @@ def show_character_selection():
 
 def handle_events():
     global running
+    global skill_effect
     event_list = get_events()
     for event in event_list:
         if event.type == SDL_QUIT:
@@ -195,9 +102,7 @@ def handle_events():
                     characters.image = load_image(f'{characterjob}/Hurt.png')
                     characters.frame = 0
                 elif event.key == SDLK_c:
-                    skill_effect.Skill_c = True
-                    skill_effect.Skill_z = False
-                    skill_effect.Skill_y = False
+                    skill_effect.skill_p = 1
                     skill_effect.image = load_image(f'{characterjob}/Skill1.png')
                     if characterjob == 'Swordsman':
                         characters.image = load_image(f'{characterjob}/Run.png')
@@ -212,10 +117,8 @@ def handle_events():
                         characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
                         characters.frame = 0
                 elif event.key == SDLK_x:
+                    skill_effect.skill_p = 2
                     skill_effect.image = load_image(f'{characterjob}/Skill2.png')
-                    skill_effect.Skill_x = True
-                    skill_effect.Skill_y = False
-                    skill_effect.Skill_c = False
                     if characterjob == 'Wizard':
                         skill_effect.x = characters.x + 50
                         skill_effect.y = characters.y - 20
@@ -229,9 +132,7 @@ def handle_events():
                         characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
                         characters.frame = 0
                 elif event.key == SDLK_z:
-                    skill_effect.Skill_z = True
-                    skill_effect.Skill_x = False
-                    skill_effect.Skill_c = False
+                    skill_effect.skill_p = 3
                     skill_effect.image = load_image(f'{characterjob}/Skill3.png')
                     skill_effect.x = characters.x + 50
                     skill_effect.y = characters.y - 20
@@ -305,13 +206,13 @@ class monster:
 def reset_world():
     global world
     global characters
-    global skill_effect
     global monster
+    global skill_effect
     world = []
 
     characters = Character(characterjob)
     world.append(characters)
-    skill_effect = skill_effect()
+    skill_effect = Skill.skill_effect(characters, characterjob, 0)
     world.append(skill_effect)
     monster = monster()
     world.append(monster)
