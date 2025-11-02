@@ -1,9 +1,8 @@
 from pico2d import *
-import random
 
 import Skill
+import monster
 from Character import Character
-from Skill import skill_effect
 
 CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
@@ -154,59 +153,10 @@ def handle_events():
             elif event.key == SDLK_SPACE:
                 characters.move = False
 
-class monster:
-    image = None
-    def __init__(self):
-        self.x, self.y = random.randint(50, 750), 400
-        self.frame = 0
-        self.attacking = False
-        self.walking = False
-        self.direction = 0
-        if monster.image is None:
-            monster.image = load_image('Skeleton/Idle.png')
-        pass
-
-    def update(self):
-        self.frame = (self.frame + 1) % 7
-        distance_x = characters.x - self.x
-        if distance_x > 0:
-            self.direction = 1
-        elif distance_x < 0:
-            self.direction = -1
-
-        if abs(distance_x) < 100 and not self.walking and not self.attacking:
-            self.walking = True
-            self.image = load_image('Skeleton/Run.png')
-        elif abs(distance_x) >= 100 and self.walking:
-            self.walking = False
-            self.image = load_image('Skeleton/Idle.png')
-
-        if abs(distance_x) < 100 and self.walking:
-            if distance_x > 0:
-                self.x += 5
-            elif distance_x < 0:
-                self.x -= 5
-
-        if abs(distance_x) < 50 and not self.attacking:
-            self.attacking = True
-            self.walking = False
-            self.image = load_image('Skeleton/Attack_1.png')
-        elif abs(distance_x) >= 50 and self.attacking:
-            self.attacking = False
-            self.image = load_image('Skeleton/Run.png')
-        pass
-
-    def draw(self):
-        if self.direction == 1:
-            self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
-        elif self.direction == -1:
-            self.image.clip_composite_draw(self.frame * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
-        pass
 
 def reset_world():
     global world
     global characters
-    global monster
     global skill_effect
     world = []
 
@@ -214,8 +164,8 @@ def reset_world():
     world.append(characters)
     skill_effect = Skill.skill_effect(characters, characterjob, 0)
     world.append(skill_effect)
-    monster = monster()
-    world.append(monster)
+    monster.monster = monster.monster(characters)
+    world.append(monster.monster)
     pass
 
 
