@@ -8,6 +8,12 @@ class item:
         self.type = item_type
         if self.type == 0:
             self.image = load_image('item/item1.png')
+        elif self.type == 1:
+            self.image = load_image('item/item2.png')
+        elif self.type == 2:
+            self.image = load_image('item/item3.png')
+        elif self.type == 3:
+            self.image = load_image('item/item4.png')
     def update(self):
         pass
 
