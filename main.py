@@ -3,7 +3,7 @@ from pico2d import *
 import Skill
 import monster
 from Character import Character
-
+from Item import item
 CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
     'Swordsman': (50, 300),
@@ -158,6 +158,7 @@ def reset_world():
     global world
     global characters
     global skill_effect
+    global item
     world = []
 
     characters = Character(characterjob)
@@ -166,7 +167,8 @@ def reset_world():
     world.append(skill_effect)
     monster.monster = monster.monster(characters)
     world.append(monster.monster)
-    pass
+    item = item(0)
+    world.append(item)
 
 
 def update_world():
