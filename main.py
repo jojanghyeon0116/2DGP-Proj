@@ -167,7 +167,7 @@ def reset_world():
     world.append(skill_effect)
     monster.monster = monster.monster(characters)
     world.append(monster.monster)
-    item = item(1)
+    item = item(4)
     world.append(item)
 
 
