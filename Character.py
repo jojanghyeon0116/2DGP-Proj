@@ -1,5 +1,38 @@
 from pico2d import load_image
 
+class Idle:
+
+    def __init__(self, character):
+        self.character = character
+        if self.character.job == 'Swordsman':
+            Character.image = load_image('Swordsman/Idle.png')
+        elif self.character.job == 'Archer':
+            Character.image = load_image('Archer/Idle.png')
+        elif self.character.job == 'Wizard':
+            Character.image = load_image('Wizard/Idle.png')
+    def enter(self, e):
+        pass
+
+    def exit(self, e):
+        pass
+
+
+    def do(self):
+        if self.character.job == 'Swordsman':
+            self.character.frame = (self.character.frame + 1) % 8
+        elif self.character.job == 'Archer':
+            self.character.frame = (self.character.frame + 1) % 6
+        elif self.character.job == 'Wizard':
+            self.character.frame = (self.character.frame + 1) % 6
+
+    def draw(self):
+        if self.character.direction_x == 1: # right
+            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+        else: # direction_x == -1: # left
+            self.character.image.clip_draw(self.character.frame * 100, 200, 100, 100, self.character.x, self.character.y)
+
+
+
 
 class Character:
     image = None
@@ -15,15 +48,12 @@ class Character:
         self.hurt = False
         self.attacking = False
         self.hp = 100
-        if Character.image is None and self.job == 'Swordsman':
-            Character.image = load_image('Swordsman/Idle.png')
-        elif Character.image is None and self.job == 'Archer':
-            Character.image = load_image('Archer/Idle.png')
-        elif Character.image is None and self.job == 'Wizard':
-            Character.image = load_image('Wizard/Idle.png')
+        self.cur_state = Idle(self)
+
 
         pass
     def update(self):
+        self.cur_state.do()
         if self.attacking:
             # 캐릭터별 공격 프레임 수
             attack_frames = {'Swordsman': 4, 'Archer': 14, 'Wizard': 4}  # 예시 프레임 수, 실제 이미지에 맞게 조정 필요
@@ -42,8 +72,8 @@ class Character:
         if self.job == 'Swordsman':
             if self.hurt or self.hp <= 0:
                 self.frame = (self.frame + 1) % 3
-            else:
-                self.frame = (self.frame + 1) % 8
+            # else:
+            #     self.frame = (self.frame + 1) % 8
         elif self.job == 'Archer':
             if not self.move and not self.hurt:
                 self.frame = (self.frame + 1) % 6
@@ -72,6 +102,7 @@ class Character:
         pass
 
     def draw(self):
+        self.cur_state.draw()
         if self.direction_x == 1:
             self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
         elif self.direction_x == -1:
