@@ -121,6 +121,25 @@ class hurt:
         else:  # direction_x == -1: # left
             self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
+class dead:
+    def __init__(self, character):
+        self.character = character
+        self.character.image = load_image(f'{self.character.job}/Dead.png')
+
+    def enter(self, e):
+        pass
+
+    def exit(self, e):
+        pass
+
+    def do(self):
+        pass
+    def draw(self):
+        if self.character.direction_x == 1:  # right
+            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+        else:  # direction_x == -1: # left
+            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+
 class Character:
     image = None
     def __init__(self, job):
@@ -134,7 +153,7 @@ class Character:
         self.jumping = False  # 점프 중인지 여부
         self.hurt = False
         self.attacking = False
-        self.hp = 100
+        self.hp = 0
         self.cur_state = Idle(self)
 
         pass
@@ -147,6 +166,8 @@ class Character:
             self.cur_state = attack(self)
         elif self.hurt:
             self.cur_state = hurt(self)
+        elif self.hp <= 0:
+            self.cur_state = dead(self)
         else:
             self.cur_state = Idle(self)
         self.cur_state.do()
@@ -163,8 +184,6 @@ class Character:
 
             # 공격 중에는 이동/점프/피격 애니메이션 업데이트를 스킵
             return
-        if self.hp <= 0:
-            self.image = load_image(f'{self.job}/Dead.png')
         if self.job == 'Swordsman':
             if self.hurt or self.hp <= 0:
                 self.frame = (self.frame + 1) % 3
