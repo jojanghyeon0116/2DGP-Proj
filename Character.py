@@ -4,12 +4,7 @@ class Idle:
 
     def __init__(self, character):
         self.character = character
-        if self.character.job == 'Swordsman':
-            self.character.image = load_image('Swordsman/Idle.png')
-        elif self.character.job == 'Archer':
-            self.character.image = load_image('Archer/Idle.png')
-        elif self.character.job == 'Wizard':
-            self.character.image = load_image('Wizard/Idle.png')
+        self.character.image = load_image(f'{self.character.job}/Idle.png')
     def enter(self, e):
         pass
 
@@ -29,7 +24,7 @@ class Idle:
         if self.character.direction_x == 1: # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
         else: # direction_x == -1: # left
-            self.character.image.clip_draw(self.character.frame * 100, 200, 100, 100, self.character.x, self.character.y)
+            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
 
 class run:
     def __init__(self, character):
@@ -48,9 +43,35 @@ class run:
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x,
-                                                     self.character.y, 128, 128)
+            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+
+class jump:
+    def __init__(self, character):
+        self.character = character
+        self.character.image = load_image(f'{self.character.job}/Jump.png')
+
+    def enter(self, e):
         pass
+
+    def exit(self, e):
+        pass
+
+    def do(self):
+        self.character.frame = (self.character.frame + 1) % 8
+        self.character.y += self.character.direction_y * 10
+        if self.character.y >= 440:  # 최고점 도달
+            self.character.direction_y = -1  # 하강 시작
+        if self.character.y <= 400:  # 바닥 도달
+            self.character.y = 400
+            self.character.direction_y = 0
+            self.character.image = load_image(f'{self.character.job}/Idle.png')
+            self.character.jumping = False  # 점프 종료
+    def draw(self):
+        if self.character.direction_x == 1:  # right
+            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+        else:  # direction_x == -1: # left
+            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+
 
 class Character:
     image = None
@@ -68,11 +89,14 @@ class Character:
         self.hp = 100
         self.cur_state = Idle(self)
 
-
         pass
     def update(self):
         if self.move:
             self.cur_state = run(self)
+        elif self.jumping:
+            self.cur_state = jump(self)
+        else:
+            self.cur_state = Idle(self)
         self.cur_state.do()
         if self.attacking:
             # 캐릭터별 공격 프레임 수
@@ -108,25 +132,16 @@ class Character:
                 self.frame = (self.frame + 1) % 4
             else:
                 self.frame = (self.frame + 1) % 8
+
         self.x += self.direction_x * 10
-        if self.jumping:
-            self.y += self.direction_y * 10
-            if self.y >= 440:  # 최고점 도달
-                self.direction_y = -1  # 하강 시작
-            if self.y <= 400:  # 바닥 도달
-                self.jumping = False
-                self.y = 400
-                self.direction_y = 0
-                self.image = load_image(f'{self.job}/Idle.png')
-                self.move = False
         pass
 
     def draw(self):
         self.cur_state.draw()
-        if self.direction_x == 1:
-            self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
-        elif self.direction_x == -1:
-            self.image.clip_composite_draw(self.frame * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
-        else:  # 정지 상태 (마지막 이동 방향에 따라)
-            self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
-        pass
+        # if self.direction_x == 1:
+        #     self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
+        # elif self.direction_x == -1:
+        #     self.image.clip_composite_draw(self.frame * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
+        # else:  # 정지 상태 (마지막 이동 방향에 따라)
+        #     self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
+        # pass

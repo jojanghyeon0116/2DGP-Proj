@@ -87,7 +87,6 @@ def handle_events():
                     characters.move = True
                 elif event.key == SDLK_SPACE:
                     if not characters.jumping:  # 점프 중이 아닐 때만 점프 가능
-                        characters.image = load_image(f'{characterjob}/Jump.png')
                         characters.direction_y = 1
                         characters.jumping = True
                         characters.move = True
