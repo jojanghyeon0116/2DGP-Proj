@@ -1,11 +1,35 @@
 from pico2d import load_image
+from sdl2 import *
+from state_machine import StateMachine
+
+def space_down(e): # e is space down ?
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
+
+def right_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_RIGHT
+
+def right_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_RIGHT
+
+
+def left_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LEFT
+
+def left_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_LEFT
+
+def ctrl_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LCTRL
+
+action_finish = lambda e: e[0] == 'FINISH'
 
 class Idle:
 
     def __init__(self, character):
         self.character = character
-        self.character.image = load_image(f'{self.character.job}/Idle.png')
     def enter(self, e):
+        self.character.frame = 0  # 프레임 초기화
+        self.character.image = load_image(f'{self.character.job}/Idle.png')
         pass
 
     def exit(self, e):
@@ -24,21 +48,29 @@ class Idle:
         if self.character.direction_x == 1: # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
         else: # direction_x == -1: # left
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x,self.character.y, 128, 128)
 
 class run:
     def __init__(self, character):
         self.character = character
-        self.character.image = load_image(f'{self.character.job}/Run.png')
 
     def enter(self, e):
-        pass
+        self.character.frame = 0  # 프레임 초기화
+        if right_down(e):
+            self.character.direction_x = 1
+            self.character.move = True
+        elif left_down(e):
+            self.character.direction_x = -1
+            self.character.move = True
+        self.character.frame = 0  # 🌟 프레임 리셋
+        self.character.image = load_image(f'{self.character.job}/Run.png')  # 이미지 재설정 (init 대신 enter에서 처리 권장)
 
     def exit(self, e):
         pass
 
     def do(self):
         self.character.frame = (self.character.frame + 1) % 8
+        self.character.x += self.character.direction_x * 10
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -48,9 +80,10 @@ class run:
 class jump:
     def __init__(self, character):
         self.character = character
-        self.character.image = load_image(f'{self.character.job}/Jump.png')
-
     def enter(self, e):
+        self.character.frame = 0  # 프레임 초기화
+        self.character.image = load_image(f'{self.character.job}/Jump.png')
+        self.character.direction_y = 1
         pass
 
     def exit(self, e):
@@ -64,8 +97,7 @@ class jump:
         if self.character.y <= 400:  # 바닥 도달
             self.character.y = 400
             self.character.direction_y = 0
-            self.character.image = load_image(f'{self.character.job}/Idle.png')
-            self.character.jumping = False  # 점프 종료
+            self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -76,21 +108,29 @@ class jump:
 class attack:
     def __init__(self, character):
         self.character = character
-        self.character.image = load_image(f'{self.character.job}/Attack.png')
 
     def enter(self, e):
+        self.character.frame = 0  # 프레임 초기화
+        self.character.image = load_image(f'{self.character.job}/Attack.png')
         pass
 
     def exit(self, e):
         pass
 
     def do(self):
+        max_frame = 0
         if self.character.job == 'Swordsman':
-            self.character.frame = (self.character.frame + 1) % 4
+            max_frame = 4
         elif self.character.job == 'Archer':
-            self.character.frame = (self.character.frame + 1) % 14
+            max_frame = 14
         elif self.character.job == 'Wizard':
-            self.character.frame = (self.character.frame + 1) % 4
+            max_frame = 4
+
+        # 프레임을 먼저 증가시키고
+        self.character.frame = (self.character.frame + 1)
+        # 최대 프레임에 도달하면 상태 전환
+        if self.character.frame >= max_frame:
+            self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -100,21 +140,26 @@ class attack:
 class hurt:
     def __init__(self, character):
         self.character = character
-        self.character.image = load_image(f'{self.character.job}/Hurt.png')
-
     def enter(self, e):
+        self.character.frame = 0
+        self.character.image = load_image(f'{self.character.job}/Hurt.png')
         pass
 
     def exit(self, e):
         pass
 
     def do(self):
+        max_frame = 0
         if self.character.job == 'Swordsman':
-            self.character.frame = (self.character.frame + 1) % 3
+            max_frame = 3
         elif self.character.job == 'Archer':
-            self.character.frame = (self.character.frame + 1) % 3
+            max_frame = 3
         elif self.character.job == 'Wizard':
-            self.character.frame = (self.character.frame + 1) % 4
+            max_frame = 4
+        self.character.frame = (self.character.frame + 1)
+        # 최대 프레임에 도달하면 상태 전환
+        if self.character.frame >= max_frame:
+            self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -124,13 +169,12 @@ class hurt:
 class dead:
     def __init__(self, character):
         self.character = character
-        self.character.image = load_image(f'{self.character.job}/Dead.png')
 
     def enter(self, e):
-        pass
+        self.character.image = load_image(f'{self.character.job}/Dead.png')
 
     def exit(self, e):
-        pass
+        exit(1)
 
     def do(self):
         pass
@@ -149,70 +193,29 @@ class Character:
         self.direction_x = 0
         self.direction_y = 0
         self.direction = 0
-        self.move = False
-        self.jumping = False  # 점프 중인지 여부
-        self.hurt = False
-        self.attacking = False
-        self.hp = 0
-        self.cur_state = Idle(self)
-
+        self.hp = 110
+        self.IDLE = Idle(self)
+        self.ATTACK = attack(self)
+        self.JUMP = jump(self)
+        self.HURT = hurt(self)
+        self.DEAD = dead(self)
+        self.RUN = run(self)
+        self.state_machine = StateMachine(
+            self.IDLE,
+            {
+                self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK, space_down: self.JUMP},
+                self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK},
+                self.JUMP: {action_finish : self.IDLE},
+                self.ATTACK: {action_finish : self.IDLE},
+                self.HURT: {action_finish : self.IDLE},
+            }
+        )
         pass
     def update(self):
-        if self.move:
-            self.cur_state = run(self)
-        elif self.jumping:
-            self.cur_state = jump(self)
-        elif self.attacking:
-            self.cur_state = attack(self)
-        elif self.hurt:
-            self.cur_state = hurt(self)
-        elif self.hp <= 0:
-            self.cur_state = dead(self)
-        else:
-            self.cur_state = Idle(self)
-        self.cur_state.do()
-        if self.attacking:
-            # 캐릭터별 공격 프레임 수
-            attack_frames = {'Swordsman': 4, 'Archer': 14, 'Wizard': 4}  # 예시 프레임 수, 실제 이미지에 맞게 조정 필요
-            max_frames = attack_frames.get(self.job, 4)  # 기본값 4
-
-            self.frame = (self.frame + 1)
-            if self.frame >= max_frames:
-                self.attacking = False  # 공격 애니메이션 종료
-                self.frame = 0
-                self.image = load_image(f'{self.job}/Idle.png')  # 대기 상태로 복귀
-
-            # 공격 중에는 이동/점프/피격 애니메이션 업데이트를 스킵
-            return
-        if self.job == 'Swordsman':
-            if self.hurt or self.hp <= 0:
-                self.frame = (self.frame + 1) % 3
-            # else:
-            #     self.frame = (self.frame + 1) % 8
-        elif self.job == 'Archer':
-            if not self.move and not self.hurt:
-                self.frame = (self.frame + 1) % 6
-            elif self.hurt or self.hp <= 0:
-                self.frame = (self.frame + 1) % 3
-            else:
-                self.frame = (self.frame + 1) % 8
-        elif self.job == 'Wizard':
-            if not self.move and not self.hurt:
-                self.frame = (self.frame + 1) % 6
-            elif self.hurt or self.hp <= 0:
-                self.frame = (self.frame + 1) % 4
-            else:
-                self.frame = (self.frame + 1) % 8
-
-        self.x += self.direction_x * 10
-        pass
+        self.state_machine.update()
 
     def draw(self):
-        self.cur_state.draw()
-        # if self.direction_x == 1:
-        #     self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
-        # elif self.direction_x == -1:
-        #     self.image.clip_composite_draw(self.frame * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
-        # else:  # 정지 상태 (마지막 이동 방향에 따라)
-        #     self.image.clip_draw(self.frame * 128, 0, 128, 128, self.x, self.y)
-        # pass
+        self.state_machine.draw()
+
+    def handle_event(self, event):
+        self.state_machine.handle_state_event(('INPUT', event))

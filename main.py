@@ -66,6 +66,7 @@ def show_character_selection():
 def handle_events():
     global running
     global skill_effect
+    global characters
     event_list = get_events()
     for event in event_list:
         if event.type == SDL_QUIT:
@@ -73,27 +74,7 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
         elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_LCTRL:
-                if not characters.attacking and not characters.jumping and not characters.hurt and characters.hp > 0:
-                    characters.attacking = True
-                    characters.frame = 0
-            if not characters.attacking:
-                if event.key == SDLK_RIGHT:
-                    characters.direction_x = 1
-                    characters.move = True
-                elif event.key == SDLK_LEFT:
-                    characters.direction_x = -1
-                    characters.move = True
-                elif event.key == SDLK_SPACE:
-                    if not characters.jumping:  # 점프 중이 아닐 때만 점프 가능
-                        characters.direction_y = 1
-                        characters.jumping = True
-                        characters.move = True
-                        characters.frame = 0
-                elif event.key == SDLK_g:
-                    characters.hurt = True
-                    characters.frame = 0
-                elif event.key == SDLK_c:
+                if event.key == SDLK_c:
                     skill_effect.skill_p = 1
                     skill_effect.image = load_image(f'{characterjob}/Skill1.png')
                     if characterjob == 'Swordsman':
@@ -131,20 +112,8 @@ def handle_events():
                     characters.attacking = True
                     characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
                     characters.frame = 0
-
-        elif event.type == SDL_KEYUP:
-            if event.key == SDLK_RIGHT:
-                if characters.direction_x == 1:
-                    characters.image = load_image(f'{characterjob}/Idle.png')
-                characters.direction_x = 0
-                characters.move = False
-            elif event.key == SDLK_LEFT:
-                if characters.direction_x == -1:
-                    characters.image = load_image(f'{characterjob}/Idle.png')
-                characters.direction_x = 0
-                characters.move = False
-            elif event.key == SDLK_SPACE:
-                characters.move = False
+        else:
+            characters.handle_event(event)
 
 
 def reset_world():
