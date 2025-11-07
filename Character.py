@@ -97,6 +97,30 @@ class attack:
         else:  # direction_x == -1: # left
             self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
+class hurt:
+    def __init__(self, character):
+        self.character = character
+        self.character.image = load_image(f'{self.character.job}/Hurt.png')
+
+    def enter(self, e):
+        pass
+
+    def exit(self, e):
+        pass
+
+    def do(self):
+        if self.character.job == 'Swordsman':
+            self.character.frame = (self.character.frame + 1) % 3
+        elif self.character.job == 'Archer':
+            self.character.frame = (self.character.frame + 1) % 3
+        elif self.character.job == 'Wizard':
+            self.character.frame = (self.character.frame + 1) % 4
+    def draw(self):
+        if self.character.direction_x == 1:  # right
+            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+        else:  # direction_x == -1: # left
+            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+
 class Character:
     image = None
     def __init__(self, job):
@@ -121,6 +145,8 @@ class Character:
             self.cur_state = jump(self)
         elif self.attacking:
             self.cur_state = attack(self)
+        elif self.hurt:
+            self.cur_state = hurt(self)
         else:
             self.cur_state = Idle(self)
         self.cur_state.do()

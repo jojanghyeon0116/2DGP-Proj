@@ -76,7 +76,6 @@ def handle_events():
             if event.key == SDLK_LCTRL:
                 if not characters.attacking and not characters.jumping and not characters.hurt and characters.hp > 0:
                     characters.attacking = True
-                    characters.image = load_image(f'{characterjob}/Attack.png')  # Attack.png 로드
                     characters.frame = 0
             if not characters.attacking:
                 if event.key == SDLK_RIGHT:
@@ -93,7 +92,6 @@ def handle_events():
                         characters.frame = 0
                 elif event.key == SDLK_g:
                     characters.hurt = True
-                    characters.image = load_image(f'{characterjob}/Hurt.png')
                     characters.frame = 0
                 elif event.key == SDLK_c:
                     skill_effect.skill_p = 1
