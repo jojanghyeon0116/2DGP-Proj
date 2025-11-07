@@ -80,13 +80,9 @@ def handle_events():
                     characters.frame = 0
             if not characters.attacking:
                 if event.key == SDLK_RIGHT:
-                    if characters.direction_x == 0:
-                        characters.image = load_image(f'{characterjob}/Run.png')
                     characters.direction_x = 1
                     characters.move = True
                 elif event.key == SDLK_LEFT:
-                    if characters.direction_x == 0:
-                        characters.image = load_image(f'{characterjob}/Run.png')
                     characters.direction_x = -1
                     characters.move = True
                 elif event.key == SDLK_SPACE:

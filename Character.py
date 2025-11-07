@@ -5,11 +5,11 @@ class Idle:
     def __init__(self, character):
         self.character = character
         if self.character.job == 'Swordsman':
-            Character.image = load_image('Swordsman/Idle.png')
+            self.character.image = load_image('Swordsman/Idle.png')
         elif self.character.job == 'Archer':
-            Character.image = load_image('Archer/Idle.png')
+            self.character.image = load_image('Archer/Idle.png')
         elif self.character.job == 'Wizard':
-            Character.image = load_image('Wizard/Idle.png')
+            self.character.image = load_image('Wizard/Idle.png')
     def enter(self, e):
         pass
 
@@ -31,8 +31,26 @@ class Idle:
         else: # direction_x == -1: # left
             self.character.image.clip_draw(self.character.frame * 100, 200, 100, 100, self.character.x, self.character.y)
 
+class run:
+    def __init__(self, character):
+        self.character = character
+        self.character.image = load_image(f'{self.character.job}/Run.png')
 
+    def enter(self, e):
+        pass
 
+    def exit(self, e):
+        pass
+
+    def do(self):
+        self.character.frame = (self.character.frame + 1) % 8
+    def draw(self):
+        if self.character.direction_x == 1:  # right
+            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+        else:  # direction_x == -1: # left
+            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x,
+                                                     self.character.y, 128, 128)
+        pass
 
 class Character:
     image = None
@@ -53,6 +71,8 @@ class Character:
 
         pass
     def update(self):
+        if self.move:
+            self.cur_state = run(self)
         self.cur_state.do()
         if self.attacking:
             # 캐릭터별 공격 프레임 수
