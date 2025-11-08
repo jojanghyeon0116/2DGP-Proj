@@ -21,6 +21,15 @@ def left_up(e):
 def ctrl_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_LCTRL
 
+def c_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_c
+
+def x_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_x
+
+def z_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_z
+
 action_finish = lambda e: e[0] == 'FINISH'
 
 class Idle:
@@ -200,16 +209,29 @@ class Character:
         self.HURT = hurt(self)
         self.DEAD = dead(self)
         self.RUN = run(self)
-        self.state_machine = StateMachine(
-            self.IDLE,
-            {
-                self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK, space_down: self.JUMP},
-                self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK},
-                self.JUMP: {action_finish : self.IDLE},
-                self.ATTACK: {action_finish : self.IDLE},
-                self.HURT: {action_finish : self.IDLE},
-            }
-        )
+        if self.job == 'Swordsman':
+            self.state_machine = StateMachine(
+                self.IDLE,
+                {
+                    self.IDLE: {right_down: self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK,
+                                space_down: self.JUMP, c_down: self.RUN, x_down: self.ATTACK, z_down: self.ATTACK},
+                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK},
+                    self.JUMP: {action_finish: self.IDLE},
+                    self.ATTACK: {action_finish: self.IDLE},
+                    self.HURT: {action_finish: self.IDLE},
+                }
+            )
+        else:
+            self.state_machine = StateMachine(
+                self.IDLE,
+                {
+                    self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK, space_down: self.JUMP, c_down: self.ATTACK, x_down: self.ATTACK, z_down: self.ATTACK},
+                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK},
+                    self.JUMP: {action_finish : self.IDLE},
+                    self.ATTACK: {action_finish : self.IDLE},
+                    self.HURT: {action_finish : self.IDLE},
+                }
+            )
         pass
     def update(self):
         self.state_machine.update()
