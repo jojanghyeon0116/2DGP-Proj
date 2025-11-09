@@ -1,4 +1,35 @@
 from pico2d import load_image
+class skill_1:
+    def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+
+class skill_2:
+    def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+
+class skill_3:
+    def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pass
+
+
 
 class skill_effect:
     image = None
