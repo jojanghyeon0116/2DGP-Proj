@@ -3,7 +3,7 @@ import random
 from pico2d import load_image
 
 
-class monster:
+class Monster:
     image = None
     def __init__(self, characters_obj):
         self.x, self.y = random.randint(50, 750), 400
@@ -12,8 +12,8 @@ class monster:
         self.walking = False
         self.direction = 0
         self.target = characters_obj
-        if monster.image is None:
-            monster.image = load_image('Skeleton/Idle.png')
+        if self.image is None:
+            self.image = load_image('Skeleton/Idle.png')
         pass
 
     def update(self):

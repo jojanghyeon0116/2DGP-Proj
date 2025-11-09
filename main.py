@@ -1,9 +1,12 @@
 from pico2d import *
 
 import Skill
-import monster
+import game_world
+from monster import Monster
 from Character import Character
-from Item import item
+from Item import *
+from game_world import *
+
 CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
     'Swordsman': (50, 300),
@@ -73,63 +76,27 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
-        # elif event.type == SDL_KEYDOWN:
-        #         if event.key == SDLK_c:
-        #             skill_effect.skill_p = 1
-        #             skill_effect.image = load_image(f'{characterjob}/Skill1.png')
-        #             if characterjob == 'Swordsman':
-        #                 characters.direction_x = 1
-        #                 skill_effect.x = characters.x + 50
-        #                 skill_effect.y = characters.y - 20
-        #             else:
-        #                 skill_effect.x = characters.x + 50
-        #                 skill_effect.y = characters.y - 20
-        #                 characters.attacking = True
-        #         elif event.key == SDLK_x:
-        #             skill_effect.skill_p = 2
-        #             skill_effect.image = load_image(f'{characterjob}/Skill2.png')
-        #             if characterjob == 'Wizard':
-        #                 skill_effect.x = characters.x + 50
-        #                 skill_effect.y = characters.y - 20
-        #             elif characterjob == 'Archer':
-        #                 skill_effect.x = characters.x + 50
-        #                 skill_effect.y = characters.y - 20
-        #         elif event.key == SDLK_z:
-        #             skill_effect.skill_p = 3
-        #             skill_effect.image = load_image(f'{characterjob}/Skill3.png')
-        #             skill_effect.x = characters.x + 50
-        #             skill_effect.y = characters.y - 20
         else:
             characters.handle_event(event)
 
 
 def reset_world():
-    global world
     global characters
-    global skill_effect
-    global item
-    world = []
 
     characters = Character(characterjob)
-    world.append(characters)
-    skill_effect = Skill.skill_effect(characters, characterjob, 0)
-    world.append(skill_effect)
-    monster.monster = monster.monster(characters)
-    world.append(monster.monster)
-    item = item(4)
-    world.append(item)
+    game_world.add_object(characters, 1)
+
+    monster = Monster(characters)
+    game_world.add_object(monster, 1)
 
 
 def update_world():
-    for o in world:
-        o.update()
-    pass
+    game_world.update()
 
 
 def render_world():
     clear_canvas()
-    for o in world:
-        o.draw()
+    game_world.render()
     update_canvas()
 
 running = True
