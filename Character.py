@@ -1,6 +1,9 @@
 from pico2d import load_image
 from sdl2 import *
+
+import game_world
 from state_machine import StateMachine
+from Skill import skill_1, skill_2, skill_3
 
 def space_down(e): # e is space down ?
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
@@ -42,7 +45,12 @@ class Idle:
         pass
 
     def exit(self, e):
-        pass
+        if z_down(e):
+            self.character.Skill_3()
+        elif x_down(e):
+            self.character.Skill_2()
+        elif c_down(e):
+            self.character.Skill_1()
 
 
     def do(self):
@@ -75,7 +83,12 @@ class run:
         self.character.image = load_image(f'{self.character.job}/Run.png')  # 이미지 재설정 (init 대신 enter에서 처리 권장)
 
     def exit(self, e):
-        pass
+        if z_down(e):
+            self.character.Skill_3()
+        elif x_down(e):
+            self.character.Skill_2()
+        elif c_down(e):
+            self.character.Skill_1()
 
     def do(self):
         self.character.frame = (self.character.frame + 1) % 8
@@ -241,3 +254,13 @@ class Character:
 
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
+
+    def Skill_1(self):
+        skill1 = skill_1(self.x, self.y, 1, self.job)
+        game_world.add_object(skill1, 1)
+    def Skill_2(self):
+        skill2 = skill_2(self.x, self.y, 1, self.job)
+        game_world.add_object(skill2, 1)
+    def Skill_3(self):
+        skill3 = skill_3(self.x, self.y, 1, self.job)
+        game_world.add_object(skill3, 1)
