@@ -19,12 +19,12 @@ def handle_events():
         else:
             characters.handle_event(event)
 
-def init():
+def init(job_name):
     global characters
     global running
 
     running = True
-    characters = Character(characterjob)
+    characters = Character(job_name)
     game_world.add_object(characters, 1)
 
     monster = Monster(characters)

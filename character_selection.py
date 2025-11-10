@@ -17,22 +17,22 @@ CHARACTER_Y_RANGE = (200, 500)
 def init():
      global image
      global running
-     image = load_image('character_selection.png')
+     image = load_image('character_select.png')
      running = True
 
 def finish():
- global image
- del image
+    global image
+    del image
 
 def update():
-    show_character_selection()
+    pass
 
 def draw():
     clear_canvas()
     image.draw(400, 300)
     update_canvas()
 
-def show_character_selection():
+def handle_events():
     global characterjob
     global running
     event_list = get_events()
@@ -49,18 +49,19 @@ def show_character_selection():
                     # 1. Swordsman 선택 영역 확인
                     if CHARACTER_POSITIONS['Swordsman'][0] <= mouse_x <= CHARACTER_POSITIONS['Swordsman'][1]:
                         characterjob = 'Swordsman'
-                        game_framework.change_mode(play_mode)
-
+                        game_framework.change_mode(play_mode, characterjob)
                         clear_canvas()
 
                     # 2. Wizard 선택 영역 확인
                     elif CHARACTER_POSITIONS['Wizard'][0] <= mouse_x <= CHARACTER_POSITIONS['Wizard'][1]:
                         characterjob = 'Wizard'
-                        game_framework.change_mode(play_mode)
+                        game_framework.change_mode(play_mode, characterjob)
                         clear_canvas()
 
                     # 3. Archer 선택 영역 확인
                     elif CHARACTER_POSITIONS['Archer'][0] <= mouse_x <= CHARACTER_POSITIONS['Archer'][1]:
                         characterjob = 'Archer'
-                        game_framework.change_mode(play_mode)
+                        game_framework.change_mode(play_mode, characterjob)
                         clear_canvas()
+def pause(): pass
+def resume(): pass
