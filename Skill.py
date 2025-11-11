@@ -1,33 +1,64 @@
 from pico2d import load_image
-
 import game_world
 from game_world import *
+import game_framework
+
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
+
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
 class skill_1:
     def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
         self.job = job
         self.image = load_image(f'{self.job}/skill1.png')
         self.x, self.y, self.velocity = x, y, velocity
         self.frame = 0
-    def update(self):
-        self.x += self.velocity * 5
+        self.max_distance = 20
         if self.job == 'Swordsman':
-            self.frame = (self.frame + 1) % 3
+            self.x = self.x + 50 * self.velocity
+            self.max_frame = 3
         elif self.job == 'Wizard':
-            self.frame = (self.frame + 1) % 3
-            self.x += 10
+            self.max_frame = 3
         elif self.job == 'Archer':
-            self.frame = (self.frame + 1) % 4
-            self.x += 10
+            self.max_frame = 4
+    def update(self):
+        if self.job == 'Swordsman':
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
+            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
+            self.max_distance += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
+            if self.max_distance >= 100 or self.max_distance <= -100:
+                game_world.remove_object(self)
+        elif self.job == 'Wizard':
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
+            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
+        elif self.job == 'Archer':
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 4
+            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
         if self.x < 25 or self.x > 800 - 25:
             game_world.remove_object(self)
 
     def draw(self):
         if self.job == 'Swordsman':
-            self.image.clip_draw(self.frame * 34, 0, 34, 128, self.x, self.y)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 34, 0, 34, 128, self.x, self.y, 50, 100)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 34, 0, 34, 128, 0, 'h', self.x, self.y, 50, 100)
         elif self.job == 'Wizard':
-            self.image.clip_draw(self.frame * 34, 0, 34, 36, self.x, self.y, 30, 30)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 34, 0, 34, 36, self.x, self.y, 30, 30)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 34, 0, 34, 36, 0, 'h', self.x, self.y, 30, 30)
         elif self.job == 'Archer':
-            self.image.clip_draw(self.frame * 33, 0, 33, 32, self.x, self.y, 50, 50)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 33, 0, 33, 32, self.x, self.y, 50, 50)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 33, 0, 33, 32, 0, 'h', self.x, self.y, 50, 50)
 
 class skill_2:
     def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
@@ -35,28 +66,39 @@ class skill_2:
         self.image = load_image(f'{self.job}/skill2.png')
         self.x, self.y, self.velocity = x, y, velocity
         self.frame = 0
-
+        if self.job == 'Swordsman':
+            self.max_frame = 5
+        elif self.job == 'Wizard':
+            self.max_frame = 3
+        elif self.job == 'Archer':
+            self.max_frame = 6
     def update(self):
         if self.job == 'Swordsman':
-            self.frame = self.frame + 1
-            if self.frame >= 5:
+            self.frame = self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
+            if self.frame >= self.max_frame:
                 game_world.remove_object(self)
         elif self.job == 'Wizard':
-            self.frame = (self.frame + 1) % 3
-            self.x += self.velocity * 5
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
+            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
         elif self.job == 'Archer':
-            self.frame = (self.frame + 1) % 6
-            self.x += self.velocity * 5
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
+            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
         if self.x < 25 or self.x > 800 - 25:
             game_world.remove_object(self)
 
     def draw(self):
         if self.job == 'Swordsman':
-            self.image.clip_draw(0, self.frame * 200, 250, 200, self.x, self.y, 75, 75)
+            self.image.clip_draw(0, int(self.frame) * 200, 250, 200, self.x, self.y, 75, 75)
         elif self.job == 'Wizard':
-            self.image.clip_draw(self.frame * 341, 0, 341, 284, self.x, self.y, 50, 50)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 341, 0, 341, 284, self.x, self.y, 50, 50)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 341, 0, 341, 284, 0, 'h', self.x, self.y, 50, 50)
         elif self.job == 'Archer':
-            self.image.clip_draw(self.frame * 170, 0, 170, 290, self.x, self.y, 100, 100)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 170, 0, 170, 290, self.x, self.y, 100, 100)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 170, 0, 170, 290, 0, 'h', self.x, self.y, 100, 100)
 
 class skill_3:
     def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
@@ -64,23 +106,37 @@ class skill_3:
         self.image = load_image(f'{self.job}/skill3.png')
         self.x, self.y, self.velocity = x, y, velocity
         self.frame = 0
-
-    def update(self):
-        self.x += self.velocity * 5
         if self.job == 'Swordsman':
-            self.frame = (self.frame + 1) % 4
+            self.max_frame = 4
         elif self.job == 'Wizard':
-            self.frame = (self.frame + 1) % 3
+            self.max_frame = 3
         elif self.job == 'Archer':
-            self.frame = (self.frame + 1) % 6
+            self.max_frame = 6
+    def update(self):
+        self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
+        if self.job == 'Swordsman':
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 4
+        elif self.job == 'Wizard':
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
+        elif self.job == 'Archer':
+            self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
 
     def draw(self):
         if self.job == 'Swordsman':
-            self.image.clip_draw(self.frame * 34, 0, 34, 35, self.x, self.y)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 34, 0, 34, 35, self.x, self.y, 40, 40)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 34, 0, 34, 35, 0, 'h', self.x, self.y, 40, 40)
         elif self.job == 'Wizard':
-            self.image.clip_draw(self.frame * 341, 0, 341, 284, self.x, self.y, 70, 70)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 341, 0, 341, 284, self.x, self.y, 70, 70)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 341, 0, 341, 284, 0, 'h', self.x, self.y, 70, 70)
         elif self.job == 'Archer':
-            self.image.clip_draw(self.frame * 170, 0, 170, 200, self.x, self.y, 70, 70)
+            if self.velocity > 0:
+                self.image.clip_draw(int(self.frame) * 170, 0, 170, 200, self.x, self.y, 70, 70)
+            elif self.velocity < 0:
+                self.image.clip_composite_draw(int(self.frame) * 170, 0, 170, 200, 0, 'h', self.x, self.y, 70, 70)
 
 
 
