@@ -1,9 +1,18 @@
 from pico2d import load_image
 from sdl2 import *
-
+import game_framework
 import game_world
 from state_machine import StateMachine
 from Skill import skill_1, skill_2, skill_3
+
+PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
+RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
+RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
+RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
+
+TIME_PER_ACTION = 0.5
+ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
 def space_down(e): # e is space down ?
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
@@ -39,10 +48,16 @@ class Idle:
 
     def __init__(self, character):
         self.character = character
+        if self.character.job == 'Swordsman':
+            self.max_frame = 8
+        elif self.character.job == 'Archer':
+            self.max_frame = 6
+        elif self.character.job == 'Wizard':
+            self.max_frame = 6
     def enter(self, e):
         self.character.frame = 0  # 프레임 초기화
         self.character.image = load_image(f'{self.character.job}/Idle.png')
-        pass
+
 
     def exit(self, e):
         if z_down(e):
@@ -55,21 +70,22 @@ class Idle:
 
     def do(self):
         if self.character.job == 'Swordsman':
-            self.character.frame = (self.character.frame + 1) % 8
+            self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
         elif self.character.job == 'Archer':
-            self.character.frame = (self.character.frame + 1) % 6
+            self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
         elif self.character.job == 'Wizard':
-            self.character.frame = (self.character.frame + 1) % 6
+            self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
 
     def draw(self):
-        if self.character.direction_x == 1: # right
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
-        else: # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x,self.character.y, 128, 128)
+        if self.character.direction_x == 1 or self.character.direction_x == 0: # right
+            self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
+        elif self.character.direction_x == -1: # direction_x == -1: # left
+            self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x,self.character.y, 128, 128)
 
 class run:
     def __init__(self, character):
         self.character = character
+        self.max_frame = 8
 
     def enter(self, e):
         self.character.frame = 0  # 프레임 초기화
@@ -91,17 +107,18 @@ class run:
             self.character.Skill_1()
 
     def do(self):
-        self.character.frame = (self.character.frame + 1) % 8
-        self.character.x += self.character.direction_x * 10
+        self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
+        self.character.x += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
     def draw(self):
         if self.character.direction_x == 1:  # right
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+            self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+            self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
 class jump:
     def __init__(self, character):
         self.character = character
+        self.max_frame = 8
     def enter(self, e):
         self.character.frame = 0  # 프레임 초기화
         self.character.image = load_image(f'{self.character.job}/Jump.png')
@@ -112,8 +129,8 @@ class jump:
         pass
 
     def do(self):
-        self.character.frame = (self.character.frame + 1) % 8
-        self.character.y += self.character.direction_y * 10
+        self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
+        self.character.y += self.character.direction_y * RUN_SPEED_PPS * game_framework.frame_time
         if self.character.y >= 440:  # 최고점 도달
             self.character.direction_y = -1  # 하강 시작
         if self.character.y <= 400:  # 바닥 도달
@@ -122,15 +139,20 @@ class jump:
             self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
         if self.character.direction_x == 1:  # right
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+            self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+            self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
 
 class attack:
     def __init__(self, character):
         self.character = character
-
+        if self.character.job == 'Swordsman':
+            self.max_frame = 4
+        elif self.character.job == 'Archer':
+            self.max_frame = 14
+        elif self.character.job == 'Wizard':
+            self.max_frame = 4
     def enter(self, e):
         self.character.frame = 0  # 프레임 초기화
         self.character.image = load_image(f'{self.character.job}/Attack.png')
@@ -140,28 +162,28 @@ class attack:
         pass
 
     def do(self):
-        max_frame = 0
-        if self.character.job == 'Swordsman':
-            max_frame = 4
-        elif self.character.job == 'Archer':
-            max_frame = 14
-        elif self.character.job == 'Wizard':
-            max_frame = 4
+
 
         # 프레임을 먼저 증가시키고
-        self.character.frame = (self.character.frame + 1)
+        self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time)
         # 최대 프레임에 도달하면 상태 전환
-        if self.character.frame >= max_frame:
+        if self.character.frame >= self.max_frame:
             self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
         if self.character.direction_x == 1:  # right
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+            self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+            self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
 class hurt:
     def __init__(self, character):
         self.character = character
+        if self.character.job == 'Swordsman':
+            self.max_frame = 3
+        elif self.character.job == 'Archer':
+            self.max_frame = 3
+        elif self.character.job == 'Wizard':
+            self.max_frame = 4
     def enter(self, e):
         self.character.frame = 0
         self.character.image = load_image(f'{self.character.job}/Hurt.png')
@@ -171,27 +193,26 @@ class hurt:
         pass
 
     def do(self):
-        max_frame = 0
-        if self.character.job == 'Swordsman':
-            max_frame = 3
-        elif self.character.job == 'Archer':
-            max_frame = 3
-        elif self.character.job == 'Wizard':
-            max_frame = 4
-        self.character.frame = (self.character.frame + 1)
+
+        self.character.frame = self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
         # 최대 프레임에 도달하면 상태 전환
-        if self.character.frame >= max_frame:
+        if self.character.frame >= self.max_frame:
             self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
         if self.character.direction_x == 1:  # right
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+            self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+            self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
 class dead:
     def __init__(self, character):
         self.character = character
-
+        if self.character.job == 'Swordsman':
+            self.max_frame = 3
+        elif self.character.job == 'Archer':
+            self.max_frame = 3
+        elif self.character.job == 'Wizard':
+            self.max_frame = 4
     def enter(self, e):
         self.character.image = load_image(f'{self.character.job}/Dead.png')
 
@@ -199,12 +220,16 @@ class dead:
         exit(1)
 
     def do(self):
-        pass
+        self.character.frame = self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
+        # 최대 프레임에 도달하면 상태 전환
+        if self.character.frame >= self.max_frame:
+            global running
+            running = False
     def draw(self):
         if self.character.direction_x == 1:  # right
-            self.character.image.clip_draw(self.character.frame * 128, 0, 128, 128, self.character.x, self.character.y)
+            self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
-            self.character.image.clip_composite_draw(self.character.frame * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+            self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
 class Character:
     image = None
