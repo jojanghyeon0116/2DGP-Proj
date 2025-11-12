@@ -1,6 +1,7 @@
 import random
 import game_framework
 from pico2d import *
+import game_world
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -65,3 +66,7 @@ class Monster:
     def handle_collision(self, group, other):
         if group == 'character:monster':
             pass
+        elif group == 'hitbox:monster':
+            # 🚩 Hitbox에서 아직 피해를 주지 않았을 때만 처리
+            if not other.damage_dealt:
+                other.damage_dealt = True  # 피해를 입혔음을 표시

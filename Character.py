@@ -172,10 +172,19 @@ class attack:
             self.max_frame = 14
         elif self.character.job == 'Wizard':
             self.max_frame = 4
+
     def enter(self, e):
-        self.character.frame = 0  # 프레임 초기화
+        self.character.frame = 0
         self.character.image = load_image(f'{self.character.job}/Attack.png')
-        pass
+
+        if self.character.job == 'Swordsman':
+            hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1)
+            game_world.add_object(hitbox, 1)  # Layer 1에 Hitbox 추가
+
+            from monster import Monster
+            for obj in game_world.world[1]:
+                if isinstance(obj, Monster):
+                    game_world.add_collision_pair('hitbox:monster', hitbox, obj)
 
     def exit(self, e):
         pass
@@ -247,6 +256,28 @@ class dead:
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
             self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
+
+class AttackHitbox:
+    def __init__(self, x, y, direction_x):
+        self.x, self.y = x + 50 * (direction_x or 1), y
+        self.lifetime = 0.15  # 판정 유지 시간 (0.15초)
+        self.damage_dealt = False # 🚩 피해를 한 번만 주도록 플래그 추가
+
+    def update(self):
+        self.lifetime -= game_framework.frame_time
+        if self.lifetime <= 0:
+            game_world.remove_object(self)
+
+    def draw(self):
+        # 디버깅용: 충돌 박스 확인 (주석 처리 가능)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 20, self.y - 40, self.x + 20, self.y + 20
+
+    def handle_collision(self, group, other):
+        # 이 객체는 몬스터에게 피해를 입히는 역할만 하므로, 몬스터가 처리합니다.
+        pass
 
 class Character:
     image = None
