@@ -8,5 +8,5 @@ class Ground:
         pass
 
     def draw(self):
-        self.image.draw(1280 // 2, 1024 // 2)
+        self.image.draw(1024 // 2, 800 // 2)
 

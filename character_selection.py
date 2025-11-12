@@ -29,7 +29,7 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(400, 300)
+    image.draw(1024 // 2, 800 // 2, 1024, 800)
     update_canvas()
 
 def handle_events():
@@ -38,7 +38,7 @@ def handle_events():
     event_list = get_events()
     for event in event_list:
         if event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            running = False
+            game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN:  # 마우스 이벤트 처리
             if event.button == SDL_BUTTON_LEFT:
                 # Y좌표 변환 (Pico2D 좌하단 (0,0) 기준)
