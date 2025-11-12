@@ -36,7 +36,7 @@ class Monster:
             if int(self.frame) >= 3:
                 game_world.remove_object(self)
         if self.hit:
-            self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time
+            self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time * 2
 
             if self.frame >= 3:
                 self.hit = False
