@@ -30,8 +30,11 @@ def init(job_name):
     monster = Monster(characters)
     game_world.add_object(monster, 1)
 
+    game_world.add_collision_pair('character:monster', characters, monster)
+
 def update():
     game_world.update()
+    game_world.handle_collisions()
 
 def draw():
     clear_canvas()
