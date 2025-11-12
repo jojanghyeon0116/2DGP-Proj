@@ -19,6 +19,7 @@ class skill_1:
         self.image = load_image(f'{self.job}/skill1.png')
         self.x, self.y, self.velocity = x, y - 20, velocity
         self.frame = 0
+        self.damage = 30
         self.max_distance = 0
         self.active = True
         if self.job == 'Swordsman':
@@ -79,6 +80,7 @@ class skill_2:
         self.job = job
         self.image = load_image(f'{self.job}/skill2.png')
         self.x, self.y, self.velocity = x, y - 20, velocity
+        self.damage = 30
         self.active = True
         self.frame = 0
         if self.job == 'Swordsman':
@@ -136,6 +138,7 @@ class skill_3:
         self.image = load_image(f'{self.job}/skill3.png')
         self.x, self.y, self.velocity = x, y - 20, velocity
         self.frame = 0
+        self.damage = 30
         self.active = True
         if self.job == 'Swordsman':
             self.max_frame = 4

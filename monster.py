@@ -15,7 +15,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 class Monster:
     image = None
     def __init__(self, characters_obj):
-        self.x, self.y = random.randint(50, 750), 400
+        self.x, self.y = 600, 400
         self.frame = 0
         self.attacking = False
         self.walking = False
@@ -37,8 +37,7 @@ class Monster:
                 game_world.remove_object(self)
         if self.hit:
             self.knockback_timer -= game_framework.frame_time
-
-            self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time * 5
+            self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time
 
             if self.knockback_timer <= 0:
                 self.hit = False
@@ -95,4 +94,10 @@ class Monster:
                     game_world.remove_object(other)
                 except Exception as e:
                     pass
-
+        elif group == 'skill:monster':
+            self.hit = True
+            self.knockback_timer = 0.2
+            self.image = load_image('Skeleton/Hurt.png')
+            self.hp -= other.damage
+            if self.hp <= 0:
+                self.image = load_image('Skeleton/Dead.png')
