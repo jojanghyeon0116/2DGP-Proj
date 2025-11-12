@@ -185,7 +185,7 @@ class attack:
                 for obj in game_world.world[1]:
                     if isinstance(obj, Monster):
                         game_world.add_collision_pair('hitbox:monster', hitbox, obj)
-            if self.character.job == 'Archer':
+            if self.character.job == 'Archer' or self.character.job == 'Wizard':
                 projectile = Projectile(self.character)
                 game_world.add_object(projectile, 1)
                 game_world.add_collision_pair('projectile:monster', projectile, None)
@@ -291,6 +291,8 @@ class Projectile:
         self.speed = 10 # 투사체 속도
         if self.character.job == 'Archer':
             self.image = load_image(f'{self.character.job}/Arrow.png')
+        elif self.character.job == 'Wizard':
+            self.image = load_image(f'{self.character.job}/projectile.png')
 
     def update(self):
         self.x += self.direction_x * self.speed * game_framework.frame_time * self.speed
@@ -299,13 +301,22 @@ class Projectile:
 
     def draw(self):
         if self.direction_x == 1:  # right
-            self.image.clip_draw(0, 0, 48, 48, self.x, self.y, 48, 48)
+            if self.character.job == 'Archer':
+                self.image.clip_draw(0, 0, 48, 48, self.x, self.y, 48, 48)
+            elif self.character.job == 'Wizard':
+                self.image.clip_draw(0, 0, 1024, 1024, self.x, self.y, 48, 48)
         else:  # direction_x == -1: # left
-            self.image.clip_composite_draw(0, 0, 48, 48, 0, 'h', self.x, self.y, 48, 48)
+            if self.character.job == 'Archer':
+                self.image.clip_composite_draw(0, 0, 48, 48, 0, 'h', self.x, self.y, 48, 48)
+            elif self.character.job == 'Wizard':
+                self.image.clip_composite_draw(0, 0, 1024, 1024, 0, 'h', self.x, self.y, 48, 48)
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 24, self.y - 12, self.x + 24, self.y + 12
+        if self.character.job == 'Archer':
+            return self.x - 24, self.y - 12, self.x + 24, self.y + 12
+        elif self.character.job == 'Wizard':
+            return self.x - 24, self.y - 24, self.x + 24 , self.y + 24
 
     def handle_collision(self, group, other):
         if group == 'projectile:monster':
