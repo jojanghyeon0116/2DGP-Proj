@@ -22,6 +22,9 @@ class Monster:
         self.direction = 0
         self.target = characters_obj
         self.max_frame = 7
+        self.hp = 100
+        self.hit = False
+        self.knockback_timer = 0.0
         if self.image is None:
             self.image = load_image('Skeleton/Idle.png')
         pass
@@ -29,29 +32,39 @@ class Monster:
     def update(self):
         self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 7
         distance_x = self.target.x - self.x
-        if distance_x > 0:
-            self.direction = 1
-        elif distance_x < 0:
-            self.direction = -1
+        if self.hit:
+            self.knockback_timer -= game_framework.frame_time
 
-        if abs(distance_x) < 100 and not self.walking and not self.attacking:
-            self.walking = True
-            self.image = load_image('Skeleton/Run.png')
-        elif abs(distance_x) >= 100 and self.walking:
-            self.walking = False
-            self.image = load_image('Skeleton/Idle.png')
+            self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time * 5
 
-        if abs(distance_x) < 100 and self.walking:
-            self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
+            if self.knockback_timer <= 0:
+                self.hit = False
+                self.image = load_image('Skeleton/Idle.png')
 
-        if abs(distance_x) < 50 and not self.attacking:
-            self.attacking = True
-            self.walking = False
-            self.image = load_image('Skeleton/Attack_1.png')
-        elif abs(distance_x) >= 50 and self.attacking:
-            self.attacking = False
-            self.image = load_image('Skeleton/Run.png')
-        pass
+                self.max_frame = 7
+        else:
+            if distance_x > 0:
+                self.direction = 1
+            elif distance_x < 0:
+                self.direction = -1
+
+            if abs(distance_x) < 100 and not self.walking and not self.attacking:
+                self.walking = True
+                self.image = load_image('Skeleton/Run.png')
+            elif abs(distance_x) >= 100 and self.walking:
+                self.walking = False
+                self.image = load_image('Skeleton/Idle.png')
+
+            if abs(distance_x) < 100 and self.walking:
+                self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
+
+            if abs(distance_x) < 50 and not self.attacking:
+                self.attacking = True
+                self.walking = False
+                self.image = load_image('Skeleton/Attack_1.png')
+            elif abs(distance_x) >= 50 and self.attacking:
+                self.attacking = False
+                self.image = load_image('Skeleton/Run.png')
 
     def draw(self):
         if self.direction == 1:
@@ -67,6 +80,13 @@ class Monster:
         if group == 'character:monster':
             pass
         elif group == 'hitbox:monster':
-            # 🚩 Hitbox에서 아직 피해를 주지 않았을 때만 처리
             if not other.damage_dealt:
-                other.damage_dealt = True  # 피해를 입혔음을 표시
+                other.damage_dealt = True
+                self.hit = True
+                self.knockback_timer = 0.2
+                self.image = load_image('Skeleton/Hurt.png')
+                try:
+                    game_world.remove_object(other)
+                except Exception as e:
+                    pass
+
