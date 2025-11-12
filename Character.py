@@ -42,6 +42,12 @@ def x_down(e):
 def z_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_z
 
+def hit(e):
+    return e[0] == 'HIT'
+
+def dead(e):
+    return e[0] == 'DEAD'
+
 action_finish = lambda e: e[0] == 'FINISH'
 
 class Idle:
@@ -200,17 +206,15 @@ class hurt:
     def enter(self, e):
         self.character.frame = 0
         self.character.image = load_image(f'{self.character.job}/Hurt.png')
-        pass
 
     def exit(self, e):
         pass
-
     def do(self):
-
         self.character.frame = self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
-        # 최대 프레임에 도달하면 상태 전환
+        self.character.x += -self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
         if self.character.frame >= self.max_frame:
             self.character.state_machine.handle_state_event(('FINISH', None))
+
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -227,6 +231,7 @@ class dead:
         elif self.character.job == 'Wizard':
             self.max_frame = 4
     def enter(self, e):
+        self.character.frame = 0
         self.character.image = load_image(f'{self.character.job}/Dead.png')
 
     def exit(self, e):
@@ -236,8 +241,7 @@ class dead:
         self.character.frame = self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
         # 최대 프레임에 도달하면 상태 전환
         if self.character.frame >= self.max_frame:
-            global running
-            running = False
+            game_framework.quit()
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -254,6 +258,8 @@ class Character:
         self.direction_y = 0
         self.direction = 0
         self.hp = 110
+        self.invincible_time = 0.0
+        self.max_invincible_time = 0.5
         self.IDLE = Idle(self)
         self.ATTACK = attack(self)
         self.JUMP = jump(self)
@@ -265,28 +271,34 @@ class Character:
                 self.IDLE,
                 {
                     self.IDLE: {right_down: self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK,
-                                space_down: self.JUMP, c_down: self.RUN, x_down: self.ATTACK, z_down: self.ATTACK},
-                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK, action_finish: self.IDLE},
-                    self.JUMP: {action_finish: self.IDLE},
-                    self.ATTACK: {action_finish: self.IDLE},
-                    self.HURT: {action_finish: self.IDLE},
+                                space_down: self.JUMP, c_down: self.RUN, x_down: self.ATTACK, z_down: self.ATTACK, hit : self.HURT},
+                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK, action_finish: self.IDLE, hit : self.HURT},
+                    self.JUMP: {action_finish: self.IDLE, hit : self.HURT},
+                    self.ATTACK: {action_finish: self.IDLE, hit : self.HURT},
+                    self.HURT: {action_finish: self.IDLE, hit : self.HURT},
+                    self.DEAD: {}
                 }
             )
         else:
             self.state_machine = StateMachine(
                 self.IDLE,
                 {
-                    self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK, space_down: self.JUMP, c_down: self.ATTACK, x_down: self.ATTACK, z_down: self.ATTACK},
-                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK,action_finish: self.IDLE},
-                    self.JUMP: {action_finish : self.IDLE},
-                    self.ATTACK: {action_finish : self.IDLE},
-                    self.HURT: {action_finish : self.IDLE},
+                    self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK,
+                                space_down: self.JUMP, c_down: self.ATTACK, x_down: self.ATTACK, z_down: self.ATTACK, hit : self.HURT},
+                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK,action_finish: self.IDLE, hit : self.HURT},
+                    self.JUMP: {action_finish : self.IDLE, hit : self.HURT},
+                    self.ATTACK: {action_finish : self.IDLE, hit : self.HURT},
+                    self.HURT: {action_finish : self.IDLE, hit : self.HURT},
+                    self.DEAD: {}
                 }
             )
         pass
     def update(self):
         self.state_machine.update()
-
+        if self.invincible_time > 0:
+            self.invincible_time -= game_framework.frame_time
+            if self.invincible_time < 0:
+                self.invincible_time = 0  # 무적 시간 종료
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
@@ -309,5 +321,20 @@ class Character:
 
     def handle_collision(self, group, other):
         if group == 'character:monster':
+            if self.invincible_time > 0:
+                return
+
             self.hp -= 10
             print(f'Character HP: {self.hp}')
+
+            self.invincible_time = self.max_invincible_time
+
+
+            if self.hp > 0:
+                self.state_machine.handle_state_event(('HIT', None))
+            else:
+                # 1. DEAD 상태로 강제 전환 (StateMachine 객체 교체)
+                self.state_machine.cur_state = self.DEAD
+
+                # 2. DEAD.enter(None) 호출 (애니메이션 초기화)
+                self.DEAD.enter(None)
