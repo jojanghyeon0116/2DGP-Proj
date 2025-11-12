@@ -17,7 +17,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 class Monster:
     image = None
     def __init__(self, characters_obj):
-        self.x, self.y = 600, 400
+        self.x, self.y = 600, 220
         self.frame = 0
         self.attacking = False
         self.walking = False

@@ -328,7 +328,7 @@ class Character:
     image = None
     def __init__(self, job):
         self.job = job
-        self.x, self.y = 400, 400
+        self.x, self.y = 400, 220
         self.frame = 0
         self.direction_x = 0
         self.direction_y = 0
