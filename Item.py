@@ -17,7 +17,6 @@ class Item:
         self.type = item_type
         self.direction = 0.5
         self.max_move = 0
-        self.remove = False
         if self.type == 0:
             self.image = load_image('item/item1.png')
         elif self.type == 1:
@@ -37,7 +36,7 @@ class Item:
 
 
     def draw(self):
-        self.image.draw(self.x, self.y)
+        self.image.draw(self.x, self.y, 32, 32)
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
@@ -45,6 +44,17 @@ class Item:
 
     def handle_collision(self, group, other):
         if group == 'character:item':
-            if not self.remove:
-                self.remove = True
-                game_world.remove_object(self)
+            if self.type == 0:
+                other.hp += 20
+                print(f'Hp : {other.hp}')
+            elif self.type == 1:
+                other.money += 100
+                print(f'Money : {other.money}')
+            elif self.type == 2:
+                other.exp += 50
+                print(f'Exp : {other.exp}')
+            elif self.type == 3:
+                other.attack_damage += 5
+            elif self.type == 4:
+                other.speed += 1
+            game_world.remove_object(self)
