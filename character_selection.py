@@ -7,9 +7,9 @@ CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
     'Swordsman': (50, 300),
     # Wizard 영역 (예시: x=350 ~ 550)
-    'Wizard': (300, 550),
+    'Wizard': (400, 650),
     # Archer 영역 (예시: x=600 ~ 800)
-    'Archer': (550, 800)
+    'Archer': (700, 1000)
 }
 # 캐릭터들의 Y축 범위는 캔버스 중앙 근처 (851px 기준, 예를 들어 y=400 ~ 500)
 CHARACTER_Y_RANGE = (200, 500)
