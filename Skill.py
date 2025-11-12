@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import *
 import game_world
 from game_world import *
 import game_framework
@@ -20,6 +20,7 @@ class skill_1:
         self.x, self.y, self.velocity = x, y - 20, velocity
         self.frame = 0
         self.max_distance = 0
+        self.active = True
         if self.job == 'Swordsman':
             self.x = self.x + 50 * self.velocity
             self.max_frame = 3
@@ -33,7 +34,9 @@ class skill_1:
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
             self.max_distance += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
             if abs(self.max_distance) >= 100:
-                game_world.remove_object(self)
+                if self.active:
+                    self.active = False
+                    game_world.remove_object(self)
         elif self.job == 'Wizard':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
@@ -41,7 +44,9 @@ class skill_1:
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 4
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
         if self.x < 25 or self.x > 800 - 25:
-            game_world.remove_object(self)
+            if self.active:
+                self.active = False
+                game_world.remove_object(self)
 
     def draw(self):
         if self.job == 'Swordsman':
@@ -59,12 +64,22 @@ class skill_1:
                 self.image.clip_draw(int(self.frame) * 33, 0, 33, 32, self.x, self.y, 50, 50)
             elif self.velocity < 0:
                 self.image.clip_composite_draw(int(self.frame) * 33, 0, 33, 32, 0, 'h', self.x, self.y, 50, 50)
+        draw_rectangle(*self.get_bb())
+    def get_bb(self):
+        return self.x - 16, self.y - 16, self.x + 16 , self.y + 16
+
+    def handle_collision(self, group, other):
+        if group == 'skill:monster':
+            if self.active:
+                self.active = False
+                game_world.remove_object(self)
 
 class skill_2:
     def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
         self.job = job
         self.image = load_image(f'{self.job}/skill2.png')
         self.x, self.y, self.velocity = x, y - 20, velocity
+        self.active = True
         self.frame = 0
         if self.job == 'Swordsman':
             self.max_frame = 5
@@ -77,7 +92,9 @@ class skill_2:
         if self.job == 'Swordsman':
             self.frame = self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
             if self.frame >= self.max_frame:
-                game_world.remove_object(self)
+                if self.active:
+                    self.active = False
+                    game_world.remove_object(self)
         elif self.job == 'Wizard':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
@@ -85,7 +102,9 @@ class skill_2:
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
         if self.x < 25 or self.x > 800 - 25:
-            game_world.remove_object(self)
+            if self.active:
+                self.active = False
+                game_world.remove_object(self)
 
     def draw(self):
         if self.job == 'Swordsman':
@@ -100,6 +119,16 @@ class skill_2:
                 self.image.clip_draw(int(self.frame) * 170, 0, 170, 290, self.x, self.y, 100, 100)
             elif self.velocity < 0:
                 self.image.clip_composite_draw(int(self.frame) * 170, 0, 170, 290, 0, 'h', self.x, self.y, 100, 100)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 16, self.y - 16, self.x + 16, self.y + 16
+
+    def handle_collision(self, group, other):
+        if group == 'skill1:monster':
+            if self.active:
+                self.active = False
+                game_world.remove_object(self)
 
 class skill_3:
     def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
@@ -107,6 +136,7 @@ class skill_3:
         self.image = load_image(f'{self.job}/skill3.png')
         self.x, self.y, self.velocity = x, y - 20, velocity
         self.frame = 0
+        self.active = True
         if self.job == 'Swordsman':
             self.max_frame = 4
         elif self.job == 'Wizard':
@@ -121,7 +151,10 @@ class skill_3:
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
         elif self.job == 'Archer':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
-
+        if self.x < 25 or self.x > 800 - 25:
+            if self.active:
+                self.active = False
+                game_world.remove_object(self)
     def draw(self):
         if self.job == 'Swordsman':
             if self.velocity > 0:
@@ -138,6 +171,16 @@ class skill_3:
                 self.image.clip_draw(int(self.frame) * 170, 0, 170, 200, self.x, self.y, 70, 70)
             elif self.velocity < 0:
                 self.image.clip_composite_draw(int(self.frame) * 170, 0, 170, 200, 0, 'h', self.x, self.y, 70, 70)
+
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 16, self.y - 16, self.x + 16, self.y + 16
+    def handle_collision(self, group, other):
+        if group == 'skill:monster':
+            if self.active:
+                self.active = False
+                game_world.remove_object(self)
 
 
 
