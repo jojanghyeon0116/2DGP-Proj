@@ -33,6 +33,7 @@ def init(job_name):
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:monster', characters, monster)
     game_world.add_collision_pair('skill:monster', None, monster)
+    game_world.add_collision_pair('projectile:monster', None, monster)
 
 def update():
     game_world.update()
