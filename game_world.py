@@ -25,4 +25,10 @@ def render():
         for o in layer:
             o.draw()
 
+def clear():
+    global world
+
+    objects = [[] for _ in range(4)]
+    collision_pairs = {}
+
 
