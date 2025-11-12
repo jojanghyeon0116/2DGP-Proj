@@ -1,5 +1,7 @@
-from pico2d import load_image
+from pico2d import load_image, draw_rectangle
 import game_framework
+import game_world
+
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 2.5  # Km / Hour
@@ -10,11 +12,12 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 class Item:
     image = None
     def __init__(self, item_type):
-        self.x = 600
-        self.y = 300
+        self.x = 200
+        self.y = 350
         self.type = item_type
         self.direction = 0.5
         self.max_move = 0
+        self.remove = False
         if self.type == 0:
             self.image = load_image('item/item1.png')
         elif self.type == 1:
@@ -35,4 +38,13 @@ class Item:
 
     def draw(self):
         self.image.draw(self.x, self.y)
-        pass
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 16, self.y - 16, self.x + 16, self.y + 16
+
+    def handle_collision(self, group, other):
+        if group == 'character:item':
+            if not self.remove:
+                self.remove = True
+                game_world.remove_object(self)
