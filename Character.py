@@ -150,10 +150,10 @@ class jump:
     def do(self):
         self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
         self.character.y += self.character.direction_y * RUN_SPEED_PPS * game_framework.frame_time
-        if self.character.y >= 440:  # 최고점 도달
+        if self.character.y >= 260:  # 최고점 도달
             self.character.direction_y = -1  # 하강 시작
-        if self.character.y <= 400:  # 바닥 도달
-            self.character.y = 400
+        if self.character.y <= 220:  # 바닥 도달
+            self.character.y = 220
             self.character.direction_y = 0
             self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
