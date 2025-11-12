@@ -176,22 +176,24 @@ class attack:
     def enter(self, e):
         self.character.frame = 0
         self.character.image = load_image(f'{self.character.job}/Attack.png')
+        if ctrl_down(e):
+            if self.character.job == 'Swordsman':
+                hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1, self.character.attack_damage)
+                game_world.add_object(hitbox, 1)  # Layer 1에 Hitbox 추가
 
-        if self.character.job == 'Swordsman':
-            hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1, self.character.attack_damage)
-            game_world.add_object(hitbox, 1)  # Layer 1에 Hitbox 추가
-
-            from monster import Monster
-            for obj in game_world.world[1]:
-                if isinstance(obj, Monster):
-                    game_world.add_collision_pair('hitbox:monster', hitbox, obj)
+                from monster import Monster
+                for obj in game_world.world[1]:
+                    if isinstance(obj, Monster):
+                        game_world.add_collision_pair('hitbox:monster', hitbox, obj)
+            if self.character.job == 'Archer':
+                projectile = Projectile(self.character)
+                game_world.add_object(projectile, 1)
+                game_world.add_collision_pair('projectile:monster', projectile, None)
 
     def exit(self, e):
         pass
 
     def do(self):
-
-
         # 프레임을 먼저 증가시키고
         self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time)
         # 최대 프레임에 도달하면 상태 전환
@@ -279,6 +281,37 @@ class AttackHitbox:
     def handle_collision(self, group, other):
         # 이 객체는 몬스터에게 피해를 입히는 역할만 하므로, 몬스터가 처리합니다.
         pass
+
+class Projectile:
+    def __init__(self, character):
+        self.character = character
+        self.x, self.y = self.character.x, self.character.y - 30
+        self.direction_x = self.character.direction_x
+        self.damage = self.character.attack_damage
+        self.speed = 10 # 투사체 속도
+        if self.character.job == 'Archer':
+            self.image = load_image(f'{self.character.job}/Arrow.png')
+
+    def update(self):
+        self.x += self.direction_x * self.speed * game_framework.frame_time * self.speed
+        if self.x < 0 or self.x > 800:
+            game_world.remove_object(self)
+
+    def draw(self):
+        if self.direction_x == 1:  # right
+            self.image.clip_draw(0, 0, 48, 48, self.x, self.y, 48, 48)
+        else:  # direction_x == -1: # left
+            self.image.clip_composite_draw(0, 0, 48, 48, 0, 'h', self.x, self.y, 48, 48)
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 24, self.y - 12, self.x + 24, self.y + 12
+
+    def handle_collision(self, group, other):
+        if group == 'projectile:monster':
+            game_world.remove_object(self)
+
+
 
 class Character:
     image = None

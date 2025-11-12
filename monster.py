@@ -113,3 +113,11 @@ class Monster:
             self.hp -= other.damage
             if self.hp <= 0:
                 self.image = load_image('Skeleton/Dead.png')
+        elif group == 'projectile:monster':
+            self.hit = True
+            self.knockback_timer = 0.2
+            self.frame = 0
+            self.image = load_image('Skeleton/Hurt.png')
+            self.hp -= other.damage
+            if self.hp <= 0:
+                self.image = load_image('Skeleton/Dead.png')
