@@ -5,6 +5,7 @@ from Item import *
 import game_framework
 from monster import Monster
 from Character import Character
+from Item import Item
 
 def handle_events():
     global running
@@ -29,6 +30,9 @@ def init(job_name):
 
     monster = Monster(characters)
     game_world.add_object(monster, 1)
+
+    item = Item(1)
+    game_world.add_object(item, 1)
 
     game_world.add_collision_pair('character:monster', characters, monster)
     game_world.add_collision_pair('skill:monster', None, monster)
