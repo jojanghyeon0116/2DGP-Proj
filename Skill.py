@@ -19,7 +19,7 @@ class skill_1:
         self.image = load_image(f'{self.job}/skill1.png')
         self.x, self.y, self.velocity = x, y, velocity
         self.frame = 0
-        self.max_distance = 20
+        self.max_distance = 0
         if self.job == 'Swordsman':
             self.x = self.x + 50 * self.velocity
             self.max_frame = 3
@@ -32,7 +32,7 @@ class skill_1:
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
             self.max_distance += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
-            if self.max_distance >= 100 or self.max_distance <= -100:
+            if abs(self.max_distance) >= 100:
                 game_world.remove_object(self)
         elif self.job == 'Wizard':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3

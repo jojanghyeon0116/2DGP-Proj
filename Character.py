@@ -86,7 +86,8 @@ class run:
     def __init__(self, character):
         self.character = character
         self.max_frame = 8
-
+        self.max_distance = 0
+        self.dash = False
     def enter(self, e):
         self.character.frame = 0  # 프레임 초기화
         if right_down(e):
@@ -95,8 +96,11 @@ class run:
         elif left_down(e):
             self.character.direction_x = -1
             self.character.move = True
+        elif c_down(e):
+            self.dash = True
         self.character.frame = 0  # 🌟 프레임 리셋
         self.character.image = load_image(f'{self.character.job}/Run.png')  # 이미지 재설정 (init 대신 enter에서 처리 권장)
+        self.max_distance = 0
 
     def exit(self, e):
         if z_down(e):
@@ -105,10 +109,19 @@ class run:
             self.character.Skill_2()
         elif c_down(e):
             self.character.Skill_1()
+            if self.character.job == 'Swordsman':
+                self.dash = True
 
     def do(self):
         self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
         self.character.x += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
+        if self.dash:
+            self.max_distance += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
+            if abs(self.max_distance) > 100:
+                self.max_distance = 0
+                self.dash = False
+                self.character.state_machine.handle_state_event(('FINISH', None))
+
     def draw(self):
         if self.character.direction_x == 1:  # right
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -217,7 +230,7 @@ class dead:
         self.character.image = load_image(f'{self.character.job}/Dead.png')
 
     def exit(self, e):
-        exit(1)
+        game_framework.quit()
 
     def do(self):
         self.character.frame = self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
@@ -253,7 +266,7 @@ class Character:
                 {
                     self.IDLE: {right_down: self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK,
                                 space_down: self.JUMP, c_down: self.RUN, x_down: self.ATTACK, z_down: self.ATTACK},
-                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK},
+                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK, action_finish: self.IDLE},
                     self.JUMP: {action_finish: self.IDLE},
                     self.ATTACK: {action_finish: self.IDLE},
                     self.HURT: {action_finish: self.IDLE},
@@ -264,7 +277,7 @@ class Character:
                 self.IDLE,
                 {
                     self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK, space_down: self.JUMP, c_down: self.ATTACK, x_down: self.ATTACK, z_down: self.ATTACK},
-                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK},
+                    self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK,action_finish: self.IDLE},
                     self.JUMP: {action_finish : self.IDLE},
                     self.ATTACK: {action_finish : self.IDLE},
                     self.HURT: {action_finish : self.IDLE},
@@ -281,11 +294,11 @@ class Character:
         self.state_machine.handle_state_event(('INPUT', event))
 
     def Skill_1(self):
-        skill1 = skill_1(self.x, self.y, 1, self.job)
+        skill1 = skill_1(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill1, 1)
     def Skill_2(self):
-        skill2 = skill_2(self.x, self.y, 1, self.job)
+        skill2 = skill_2(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill2, 1)
     def Skill_3(self):
-        skill3 = skill_3(self.x, self.y, 1, self.job)
+        skill3 = skill_3(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill3, 1)
