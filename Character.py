@@ -120,7 +120,7 @@ class run:
 
     def do(self):
         self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
-        self.character.x += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
+        self.character.x += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time * self.character.speed
         if self.dash:
             self.max_distance += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
             if abs(self.max_distance) > 100:
@@ -178,7 +178,7 @@ class attack:
         self.character.image = load_image(f'{self.character.job}/Attack.png')
 
         if self.character.job == 'Swordsman':
-            hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1)
+            hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1, self.character.attack_damage)
             game_world.add_object(hitbox, 1)  # Layer 1에 Hitbox 추가
 
             from monster import Monster
@@ -258,11 +258,11 @@ class dead:
             self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
 
 class AttackHitbox:
-    def __init__(self, x, y, direction_x):
+    def __init__(self, x, y, direction_x, damage):
         self.x, self.y = x + 50 * (direction_x or 1), y
         self.lifetime = 0.15  # 판정 유지 시간 (0.15초)
         self.damage_dealt = False # 🚩 피해를 한 번만 주도록 플래그 추가
-        self.damage = 30
+        self.damage = damage
 
     def update(self):
         self.lifetime -= game_framework.frame_time
@@ -290,6 +290,9 @@ class Character:
         self.direction_y = 0
         self.direction = 0
         self.hp = 110
+        self.money = 0
+        self.exp = 0
+        self.speed = 1
         self.invincible_time = 0.0
         self.max_invincible_time = 0.5
         self.attack_damage = 10
@@ -343,7 +346,7 @@ class Character:
         self.state_machine.handle_state_event(('INPUT', event))
 
     def Skill_1(self):
-        skill1 = skill_1(self.x, self.y, self.direction_x, self.job)
+        skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
         game_world.add_object(skill1, 1)
         game_world.add_collision_pair('skill:monster', skill1, None)
     def Skill_2(self):

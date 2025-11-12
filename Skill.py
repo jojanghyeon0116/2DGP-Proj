@@ -14,7 +14,7 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 class skill_1:
-    def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman'):
+    def __init__(self, x = 400, y = 300, velocity = 1, job = 'Swordsman', speed = 1):
         self.job = job
         self.image = load_image(f'{self.job}/skill1.png')
         self.x, self.y, self.velocity = x, y - 20, velocity
@@ -22,6 +22,7 @@ class skill_1:
         self.damage = 30
         self.max_distance = 0
         self.active = True
+        self.speed = speed
         if self.job == 'Swordsman':
             self.x = self.x + 50 * self.velocity
             self.max_frame = 3
@@ -32,7 +33,7 @@ class skill_1:
     def update(self):
         if self.job == 'Swordsman':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
-            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
+            self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time * self.speed
             self.max_distance += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
             if abs(self.max_distance) >= 100:
                 if self.active:

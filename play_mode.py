@@ -31,7 +31,7 @@ def init(job_name):
     monster = Monster(characters)
     game_world.add_object(monster, 1)
 
-    item = Item(1)
+    item = Item(4)
     game_world.add_object(item, 1)
 
     game_world.add_collision_pair('character:item', characters, None)
