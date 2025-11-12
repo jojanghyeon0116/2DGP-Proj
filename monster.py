@@ -2,6 +2,8 @@ import random
 import game_framework
 from pico2d import *
 import game_world
+import Item
+
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -34,6 +36,16 @@ class Monster:
         distance_x = self.target.x - self.x
         if self.hp <= 0:
             if int(self.frame) >= 3:
+                new_item = Item.item(1, self.x - 10, self.y - 30)
+                game_world.add_object(new_item, 1)
+                game_world.add_collision_pair('character:item', None, new_item)
+                new_item = Item.item(2, self.x + 10, self.y - 30)
+                game_world.add_object(new_item, 1)
+                game_world.add_collision_pair('character:item', None, new_item)
+
+                new_item = Item.item(random.randint(0,4), self.x, self.y - 30)
+                game_world.add_object(new_item, 1)
+                game_world.add_collision_pair('character:item', None, new_item)
                 game_world.remove_object(self)
         if self.hit:
             self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time * 2

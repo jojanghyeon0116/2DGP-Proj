@@ -9,11 +9,11 @@ RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
-class Item:
+class item:
     image = None
-    def __init__(self, item_type):
-        self.x = 200
-        self.y = 350
+    def __init__(self, item_type, x = 200, y = 350):
+        self.x = x
+        self.y = y
         self.type = item_type
         self.direction = 0.5
         self.max_move = 0
