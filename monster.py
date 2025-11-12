@@ -32,6 +32,9 @@ class Monster:
     def update(self):
         self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 7
         distance_x = self.target.x - self.x
+        if self.hp <= 0:
+            if int(self.frame) >= 3:
+                game_world.remove_object(self)
         if self.hit:
             self.knockback_timer -= game_framework.frame_time
 
@@ -85,6 +88,9 @@ class Monster:
                 self.hit = True
                 self.knockback_timer = 0.2
                 self.image = load_image('Skeleton/Hurt.png')
+                self.hp -= other.damage
+                if self.hp <= 0:
+                    self.image = load_image('Skeleton/Dead.png')
                 try:
                     game_world.remove_object(other)
                 except Exception as e:

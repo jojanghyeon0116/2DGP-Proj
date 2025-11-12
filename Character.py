@@ -262,6 +262,7 @@ class AttackHitbox:
         self.x, self.y = x + 50 * (direction_x or 1), y
         self.lifetime = 0.15  # 판정 유지 시간 (0.15초)
         self.damage_dealt = False # 🚩 피해를 한 번만 주도록 플래그 추가
+        self.damage = 30
 
     def update(self):
         self.lifetime -= game_framework.frame_time
@@ -291,6 +292,7 @@ class Character:
         self.hp = 110
         self.invincible_time = 0.0
         self.max_invincible_time = 0.5
+        self.attack_damage = 10
         self.IDLE = Idle(self)
         self.ATTACK = attack(self)
         self.JUMP = jump(self)
