@@ -1,12 +1,12 @@
 import random
 import game_framework
-from pico2d import load_image
+from pico2d import *
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
-RUN_SPEED_KMPH = 20.0  # Km / Hour
+RUN_SPEED_KMPH = 10.0  # Km / Hour
 RUN_SPEED_MPM = (RUN_SPEED_KMPH * 1000.0 / 60.0)
 RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
@@ -57,4 +57,11 @@ class Monster:
             self.image.clip_draw(int(self.frame) * 128, 0, 128, 128, self.x, self.y)
         elif self.direction == -1:
             self.image.clip_composite_draw(int(self.frame) * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
-        pass
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 32, self.y - 64, self.x + 32, self.y + 10
+
+    def handle_collision(self, group, other):
+        if group == 'character:monster':
+            pass

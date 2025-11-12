@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import *
 from sdl2 import *
 import game_framework
 import game_world
@@ -289,6 +289,10 @@ class Character:
 
     def draw(self):
         self.state_machine.draw()
+        draw_rectangle(*self.get_bb())
+
+    def get_bb(self):
+        return self.x - 32, self.y - 64, self.x + 32 , self.y + 10
 
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
@@ -302,3 +306,8 @@ class Character:
     def Skill_3(self):
         skill3 = skill_3(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill3, 1)
+
+    def handle_collision(self, group, other):
+        if group == 'character:monster':
+            self.hp -= 10
+            print(f'Character HP: {self.hp}')
