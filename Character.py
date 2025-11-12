@@ -345,12 +345,15 @@ class Character:
     def Skill_1(self):
         skill1 = skill_1(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill1, 1)
+        game_world.add_collision_pair('skill:monster', skill1, None)
     def Skill_2(self):
         skill2 = skill_2(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill2, 1)
+        game_world.add_collision_pair('skill:monster', skill2, None)
     def Skill_3(self):
         skill3 = skill_3(self.x, self.y, self.direction_x, self.job)
         game_world.add_object(skill3, 1)
+        game_world.add_collision_pair('skill:monster', skill3, None)
 
     def handle_collision(self, group, other):
         if group == 'character:monster':
