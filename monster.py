@@ -36,14 +36,12 @@ class Monster:
             if int(self.frame) >= 3:
                 game_world.remove_object(self)
         if self.hit:
-            self.knockback_timer -= game_framework.frame_time
             self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time
 
-            if self.knockback_timer <= 0:
+            if self.frame >= 3:
                 self.hit = False
                 self.image = load_image('Skeleton/Idle.png')
 
-                self.max_frame = 7
         else:
             if distance_x > 0:
                 self.direction = 1
@@ -84,6 +82,7 @@ class Monster:
         elif group == 'hitbox:monster':
             if not other.damage_dealt:
                 other.damage_dealt = True
+                self.frame = 0
                 self.hit = True
                 self.knockback_timer = 0.2
                 self.image = load_image('Skeleton/Hurt.png')
@@ -97,6 +96,7 @@ class Monster:
         elif group == 'skill:monster':
             self.hit = True
             self.knockback_timer = 0.2
+            self.frame = 0
             self.image = load_image('Skeleton/Hurt.png')
             self.hp -= other.damage
             if self.hp <= 0:
