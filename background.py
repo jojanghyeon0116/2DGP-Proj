@@ -2,7 +2,7 @@ from pico2d import load_image
 
 class Ground:
     def __init__(self):
-        self.image = load_image('background.png')
+        self.image = load_image('background/background.png')
 
     def update(self):
         pass
