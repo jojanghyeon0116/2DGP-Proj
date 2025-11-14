@@ -162,12 +162,7 @@ class jump:
         if self.character.direction_x != 0:
             self.character.x += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time * self.character.speed
 
-        if self.character.y >= 260:  # 최고점 도달
-            self.character.direction_y = -1  # 하강 시작
-        if self.character.y <= 220:  # 바닥 도달
-            self.character.y = 220
-            self.character.direction_y = 0
-            self.character.state_machine.handle_state_event(('FINISH', None))
+
     def draw(self):
         if self.character.direction_x == 1 or self.character.direction_x == 0:  # right
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
@@ -391,6 +386,24 @@ class Character:
             self.invincible_time -= game_framework.frame_time
             if self.invincible_time < 0:
                 self.invincible_time = 0  # 무적 시간 종료
+
+        if self.direction_y != 0:
+            self.y += self.direction_y * RUN_SPEED_PPS * game_framework.frame_time
+
+                # 2. 최고점 도달 확인 (점프 상한선)
+        if self.y >= 260 and self.direction_y == 1:
+            self.direction_y = -1  # 하강 시작
+
+                # 3. 지면(y=220) 착지 처리
+        if self.y < 220:
+            self.y = 220
+            self.direction_y = 0
+
+                # 지면에 닿았을 때 JUMP 상태를 IDLE로 전환
+            if self.state_machine.cur_state == self.JUMP:
+                self.state_machine.handle_state_event(('FINISH', None))
+        if self.direction_y == 0 and self.y > 220:
+            self.direction_y = -1  # 하강 시작
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
@@ -433,3 +446,30 @@ class Character:
 
                 # 2. DEAD.enter(None) 호출 (애니메이션 초기화)
                 self.DEAD.enter(None)
+        elif group == 'character:platform':
+            # 캐릭터의 바닥 좌표 계산: 캐릭터 중심 Y (self.y) - 64
+            char_bottom = self.y - 64
+
+            # other (Platform)의 BB 가져오기
+            platform_left, platform_bottom, platform_right, platform_top = other.get_bb()
+
+            # 1. 수평 범위 확인
+            char_left, _, char_right, _ = self.get_bb()
+            if char_right > platform_left and char_left < platform_right:
+
+                # 2. 상단 충돌 조건 (하강 중이고, 캐릭터 바닥이 블록 상단에 가까이 닿았을 때)
+                # platform_top 바로 위에 착지할 만큼 가까운지 확인
+                if self.direction_y <= 0 and char_bottom <= platform_top and char_bottom > platform_top - 10:
+
+                    # 🌟 정확한 착지 위치 설정 🌟
+                    # 새로운 Y 좌표 = 블록 상단 + 캐릭터 바닥에서 중심까지의 거리 (64)
+                    new_y = platform_top + 64
+
+                    self.y = new_y
+                    self.direction_y = 0  # 🌟 수직 속도를 0으로 멈춤 (블록 위에 고정)
+
+                    # 🌟 착지 애니메이션 전환
+                    if self.state_machine.cur_state == self.JUMP:
+                        self.state_machine.handle_state_event(('FINISH', None))
+
+                    return  # 충돌 처리 완료
