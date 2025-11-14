@@ -139,10 +139,19 @@ class jump:
         self.character = character
         self.max_frame = 8
     def enter(self, e):
-        self.character.frame = 0  # 프레임 초기화
-        self.character.image = load_image(f'{self.character.job}/Jump.png')
-        self.character.direction_y = 1
-        pass
+        if self.character.state_machine.cur_state != self:
+            self.character.frame = 0
+            self.character.image = load_image(f'{self.character.job}/Jump.png')
+            self.character.direction_y = 1  # 상승 시작
+        previous_state = self.character.state_machine.cur_state
+        if right_down(e):
+            self.character.direction_x = 1
+        elif left_down(e):
+            self.character.direction_x = -1
+        elif e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE:
+            if previous_state == self.character.IDLE:
+                self.character.direction_x = 0
+            pass
 
     def exit(self, e):
         pass
@@ -150,6 +159,9 @@ class jump:
     def do(self):
         self.character.frame = (self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
         self.character.y += self.character.direction_y * RUN_SPEED_PPS * game_framework.frame_time
+        if self.character.direction_x != 0:
+            self.character.x += self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time * self.character.speed
+
         if self.character.y >= 260:  # 최고점 도달
             self.character.direction_y = -1  # 하강 시작
         if self.character.y <= 220:  # 바닥 도달
@@ -157,7 +169,7 @@ class jump:
             self.character.direction_y = 0
             self.character.state_machine.handle_state_event(('FINISH', None))
     def draw(self):
-        if self.character.direction_x == 1:  # right
+        if self.character.direction_x == 1 or self.character.direction_x == 0:  # right
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
             self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
@@ -353,7 +365,7 @@ class Character:
                     self.IDLE: {right_down: self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK,
                                 space_down: self.JUMP, c_down: self.RUN, x_down: self.ATTACK, z_down: self.ATTACK, hit : self.HURT},
                     self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK, action_finish: self.IDLE, hit : self.HURT},
-                    self.JUMP: {action_finish: self.IDLE, hit : self.HURT},
+                    self.JUMP: {right_down: self.JUMP, left_down: self.JUMP, action_finish: self.IDLE, hit : self.HURT},
                     self.ATTACK: {action_finish: self.IDLE, hit : self.HURT},
                     self.HURT: {action_finish: self.IDLE, hit : self.HURT},
                     self.DEAD: {}
@@ -366,7 +378,7 @@ class Character:
                     self.IDLE: {right_down : self.RUN, left_down: self.RUN, ctrl_down: self.ATTACK,
                                 space_down: self.JUMP, c_down: self.ATTACK, x_down: self.ATTACK, z_down: self.ATTACK, hit : self.HURT},
                     self.RUN: {space_down: self.JUMP, right_up: self.IDLE, left_up: self.IDLE, ctrl_down: self.ATTACK,action_finish: self.IDLE, hit : self.HURT},
-                    self.JUMP: {action_finish : self.IDLE, hit : self.HURT},
+                    self.JUMP: {right_down: self.JUMP, left_down: self.JUMP, action_finish: self.IDLE, hit : self.HURT},
                     self.ATTACK: {action_finish : self.IDLE, hit : self.HURT},
                     self.HURT: {action_finish : self.IDLE, hit : self.HURT},
                     self.DEAD: {}
