@@ -143,6 +143,7 @@ class jump:
             self.character.frame = 0
             self.character.image = load_image(f'{self.character.job}/Jump.png')
             self.character.direction_y = 1  # 상승 시작
+            self.character.jump_peak_y = (self.character.y - 64) + self.character.max_jump_height + 64
         previous_state = self.character.state_machine.cur_state
         if right_down(e):
             self.character.direction_x = 1
@@ -346,6 +347,8 @@ class Character:
         self.speed = 1
         self.invincible_time = 0.0
         self.max_invincible_time = 0.5
+        self.max_jump_height = 180
+        self.jump_peak_y = 0
         self.attack_damage = 10
         self.IDLE = Idle(self)
         self.ATTACK = attack(self)
@@ -391,7 +394,7 @@ class Character:
             self.y += self.direction_y * RUN_SPEED_PPS * game_framework.frame_time
 
                 # 2. 최고점 도달 확인 (점프 상한선)
-        if self.y >= 260 and self.direction_y == 1:
+        if self.y >= self.jump_peak_y and self.direction_y == 1:
             self.direction_y = -1  # 하강 시작
 
                 # 3. 지면(y=220) 착지 처리
