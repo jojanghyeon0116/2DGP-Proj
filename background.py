@@ -17,7 +17,7 @@ class Platform:
     def __init__(self):
         self.image = load_image('background/background2.png')
         self.x = 200
-        self.y = 170
+        self.y = 300
 
     def update(self):
         pass
