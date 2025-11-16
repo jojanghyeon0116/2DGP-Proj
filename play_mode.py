@@ -32,10 +32,10 @@ def init(job_name):
     monster = Monster(characters)
     game_world.add_object(monster, 1)
 
-    back_ground = Ground()
+    back_ground = Ground(characters)
     game_world.add_object(back_ground, 0)
 
-    platform = Platform()
+    platform = Platform(characters, 200, 300)
     game_world.add_object(platform, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
