@@ -230,12 +230,12 @@ class hurt:
         pass
     def do(self):
         self.character.frame = self.character.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
-        self.character.x += -self.character.direction_x * RUN_SPEED_PPS * game_framework.frame_time
+        self.character.x += self.character.knockback_distance * RUN_SPEED_PPS * game_framework.frame_time
         if self.character.frame >= self.max_frame:
             self.character.state_machine.handle_state_event(('FINISH', None))
 
     def draw(self):
-        if self.character.direction_x == 1:  # right
+        if self.character.knockback_distance == -1:  # right
             self.character.image.clip_draw(int(self.character.frame) * 128, 0, 128, 128, self.character.x, self.character.y)
         else:  # direction_x == -1: # left
             self.character.image.clip_composite_draw(int(self.character.frame) * 128, 0, 128, 128, 0, 'h', self.character.x, self.character.y, 128, 128)
@@ -349,6 +349,7 @@ class Character:
         self.max_invincible_time = 0.5
         self.max_jump_height = 180
         self.jump_peak_y = 0
+        self.knockback_distance = 0
         self.attack_damage = 10
         self.IDLE = Idle(self)
         self.ATTACK = attack(self)
@@ -439,8 +440,7 @@ class Character:
             print(f'Character HP: {self.hp}')
 
             self.invincible_time = self.max_invincible_time
-
-
+            self.knockback_distance = other.direction
             if self.hp > 0 and other.attacking:
                 self.state_machine.handle_state_event(('HIT', None))
             elif self.hp <= 0 and other.attacking:
