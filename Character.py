@@ -476,3 +476,9 @@ class Character:
                         self.state_machine.handle_state_event(('FINISH', None))
 
                     return  # 충돌 처리 완료
+        elif group == 'character:back_ground':
+            ground_left, ground_bottom, ground_right, ground_top = other.get_bb()
+            if self.x - 32 < ground_left:
+                self.x = ground_left + 32
+            elif self.x + 32> ground_right:
+                self.x = ground_right - 32
