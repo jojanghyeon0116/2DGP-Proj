@@ -55,24 +55,59 @@ class Ground:
 
 
 class Platform:
-    def __init__(self, character, x, y):
+    # 🌟 Ground 객체를 추가적으로 받도록 __init__을 수정해야 합니다.
+    def __init__(self, character, ground_obj, x, y):  # <-- ground_obj 추가
         self.image = load_image('background/background2.png')
-        self.character = character  # 🌟 캐릭터 참조 저장
-        self.world_x = x  # 🌟 월드 좌표를 저장
+        self.character = character
+        self.ground = ground_obj  # 🌟 Ground 객체 저장
+        self.world_x = x
         self.world_y = y
 
+    # 2. 카메라 오프셋을 계산하고 제한하는 함수 추가
     def update(self):
-        pass
+        # Ground 클래스의 __init__에서 저장된 속성 사용
+        bg_width = self.ground.bg_width
+        screen_width = self.ground.screen_width
+
+        # 1. 캐릭터 기반으로 원본 카메라 오프셋 계산
+        raw_offset = self.character.x - 400
+
+        # 2. Ground의 draw 메서드에서 사용한 클램핑 로직을 재사용
+        if bg_width <= screen_width:
+            return 0
+        else:
+            half_bg_width = bg_width / 2.0
+
+            # 카메라가 왼쪽으로 이동할 수 있는 최소 오프셋 (배경 오른쪽 끝이 화면에 닿을 때)
+            min_offset = (screen_width / 2.0) - half_bg_width
+
+            # 카메라가 오른쪽으로 이동할 수 있는 최대 오프셋 (배경 왼쪽 끝이 화면에 닿을 때)
+            max_offset = half_bg_width - (screen_width / 2.0)
+
+            # 3. 오프셋을 제한하여 반환
+            final_offset = max(min_offset, raw_offset)
+            final_offset = min(max_offset, final_offset)
+            return final_offset
 
     def draw(self):
-        screen_x = self.world_x - (self.character.x - 400)
+        # 🌟 raw offset 대신 제한된 offset을 사용합니다.
+        clamped_offset = self.update()
+
+        # screen_x = self.world_x - (raw_offset) <-- 이전 코드
+        screen_x = self.world_x - clamped_offset  # <-- 수정
+
         self.image.draw(screen_x, self.world_y, 100, 100)
-        draw_rectangle(*self.get_bb())
+        # BB를 그릴 때도 screen_x를 전달하여 월드 좌표와 동기화되도록 합니다.
+        draw_rectangle(*self.get_bb(screen_x))
+
+        # 3. get_bb 수정 (draw에서 screen_x를 전달받아 사용)
 
     def get_bb(self, screen_x=None):
-        if screen_x is None:  # 화면 BB를 구할 때만 계산 (Draw에서 사용)
-            screen_x = self.world_x - (self.character.x - 400)
-            # y 좌표는 변하지 않는다고 가정
+        if screen_x is None:
+            # get_bb가 draw가 아닌 곳에서 호출될 경우, 제한된 오프셋으로 계산합니다.
+            clamped_offset = self.update()
+            screen_x = self.world_x - clamped_offset
+
         screen_y = self.world_y
 
         return screen_x - 40, screen_y - 25, screen_x + 40, screen_y + 25

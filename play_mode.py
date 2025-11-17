@@ -35,7 +35,7 @@ def init(job_name):
     back_ground = Ground(characters)
     game_world.add_object(back_ground, 0)
 
-    platform = Platform(characters, 200, 300)
+    platform = Platform(characters, back_ground, 200, 300)
     game_world.add_object(platform, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
