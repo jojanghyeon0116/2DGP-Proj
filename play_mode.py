@@ -6,7 +6,7 @@ import game_framework
 from monster import Monster
 from Character import Character
 from background import Ground, Platform
-
+import monster
 
 def handle_events():
     global running
@@ -24,6 +24,7 @@ def handle_events():
 def init(job_name):
     global characters
     global running
+    global platform
 
     running = True
     characters = Character(job_name)
@@ -46,6 +47,10 @@ def init(job_name):
     game_world.add_collision_pair('character:back_ground', characters, back_ground)
 
 def update():
+    global platform  # 🌟 platform 객체 사용 선언
+    offset_value = platform.update()
+
+    monster.camera_offset_x = offset_value
     game_world.update()
     game_world.handle_collisions()
 

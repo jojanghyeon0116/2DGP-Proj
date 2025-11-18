@@ -4,6 +4,7 @@ from pico2d import *
 import game_world
 import Item
 
+camera_offset_x = 0
 
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
@@ -32,8 +33,12 @@ class Monster:
         pass
 
     def update(self):
+        global camera_offset_x
         self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 7
-        distance_x = self.target.x - self.x
+        monster_screen_x = self.x - camera_offset_x
+        character_screen_x = self.target.x
+        distance_x_screen = character_screen_x - monster_screen_x
+        distance_x_world = self.target.x - self.x
         if self.hp <= 0:
             if int(self.frame) >= 3:
                 new_item = Item.item(1, self.x - 10, self.y - 30)
@@ -55,37 +60,51 @@ class Monster:
                 self.image = load_image('Skeleton/Idle.png')
 
         else:
-            if distance_x > 0:
+            if distance_x_world > 0:
                 self.direction = 1
-            elif distance_x < 0:
+            elif distance_x_world < 0:
                 self.direction = -1
 
-            if abs(distance_x) < 100 and not self.walking and not self.attacking:
+                # 🏃 추적 시작/멈춤 판단: 화면 상의 거리를 사용합니다.
+            if abs(distance_x_screen) < 100 and not self.walking and not self.attacking:
                 self.walking = True
                 self.image = load_image('Skeleton/Run.png')
-            elif abs(distance_x) >= 100 and self.walking:
+            elif abs(distance_x_screen) >= 100 and self.walking:
                 self.walking = False
                 self.image = load_image('Skeleton/Idle.png')
 
-            if abs(distance_x) < 100 and self.walking:
+                # 🏃 몬스터 이동: 월드 좌표(self.x)를 변경하여 이동합니다.
+                # 몬스터의 이동 방향은 distance_x_world를 따릅니다.
+            if abs(distance_x_screen) < 100 and self.walking:
                 self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
 
-            if abs(distance_x) < 50 and not self.attacking:
+                # ⚔️ 공격 시작 판단: 화면 상의 거리를 사용합니다.
+            if abs(distance_x_screen) < 50 and not self.attacking:
                 self.attacking = True
                 self.walking = False
                 self.image = load_image('Skeleton/Attack_1.png')
-            elif abs(distance_x) >= 50 and self.attacking:
+            elif abs(distance_x_screen) >= 50 and self.attacking:
                 self.attacking = False
-                self.image = load_image('Skeleton/Run.png')
+                # 공격 후 상태 전환
+                if abs(distance_x_screen) >= 100:
+                    self.walking = False
+                    self.image = load_image('Skeleton/Idle.png')
+                else:
+                    self.walking = True
+                    self.image = load_image('Skeleton/Run.png')
 
     def draw(self):
+        global camera_offset_x
+        screen_x = self.x - camera_offset_x
         if self.direction == 1:
-            self.image.clip_draw(int(self.frame) * 128, 0, 128, 128, self.x, self.y)
+            # 화면 좌표 (screen_x)를 사용
+            self.image.clip_draw(int(self.frame) * 128, 0, 128, 128, screen_x, self.y)
         elif self.direction == -1:
-            self.image.clip_composite_draw(int(self.frame) * 128, 0, 128, 128, 0, 'h', self.x, self.y, 128, 128)
-        draw_rectangle(*self.get_bb())
+            # 화면 좌표 (screen_x)를 사용
+            self.image.clip_composite_draw(int(self.frame) * 128, 0, 128, 128, 0, 'h', screen_x, self.y, 128, 128)
+        draw_rectangle(screen_x - 32, self.y - 64, screen_x + 32, self.y + 10)
 
-    def get_bb(self):
+    def get_bb(self, offset_x=None):
         return self.x - 32, self.y - 64, self.x + 32, self.y + 10
 
     def handle_collision(self, group, other):
