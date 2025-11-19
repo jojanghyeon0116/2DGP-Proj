@@ -53,7 +53,7 @@ class Monster:
                 game_world.add_collision_pair('character:item', None, new_item)
                 game_world.remove_object(self)
         if self.hit:
-            self.x += -self.direction * RUN_SPEED_PPS * game_framework.frame_time * 2
+            self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time * 2
 
             if self.frame >= 3:
                 self.hit = False
@@ -114,6 +114,7 @@ class Monster:
             if self.attacking:
                 other.handle_collision('character:monster', self)
         elif group == 'hitbox:monster':
+            self.direction = other.direction_x
             if not other.damage_dealt:
                 other.damage_dealt = True
                 self.frame = 0
@@ -126,6 +127,7 @@ class Monster:
 
         elif group == 'skill:monster':
             self.hit = True
+            self.direction = other.velocity
             self.knockback_timer = 0.2
             self.frame = 0
             self.image = load_image('Skeleton/Hurt.png')
@@ -133,6 +135,7 @@ class Monster:
             if self.hp <= 0:
                 self.image = load_image('Skeleton/Dead.png')
         elif group == 'projectile:monster':
+            self.direction = other.direction_x
             self.hit = True
             self.knockback_timer = 0.2
             self.frame = 0
