@@ -7,6 +7,7 @@ from monster import Monster
 from Character import Character
 from background import Ground, Platform, Portal
 import monster
+import stage_2
 
 def handle_events():
     global running
@@ -39,7 +40,7 @@ def init(job_name):
     platform = Platform(characters, back_ground, 200, 300)
     game_world.add_object(platform, 0)
 
-    portal = Portal(characters, back_ground, 1200, 220)
+    portal = Portal(characters, back_ground, 1200, 220, next_mode=stage_2)
     game_world.add_object(portal, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
