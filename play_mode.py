@@ -5,7 +5,7 @@ from Item import *
 import game_framework
 from monster import Monster
 from Character import Character
-from background import Ground, Platform
+from background import Ground, Platform, Portal
 import monster
 
 def handle_events():
@@ -38,6 +38,9 @@ def init(job_name):
 
     platform = Platform(characters, back_ground, 200, 300)
     game_world.add_object(platform, 0)
+
+    portal = Portal(characters, back_ground, 1200, 220)
+    game_world.add_object(portal, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:monster', characters, monster)
