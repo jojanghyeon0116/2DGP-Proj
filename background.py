@@ -116,12 +116,13 @@ class Platform:
         pass
 
 class Portal:
-    def __init__(self, character, ground_obj, x, y):  # <-- ground_obj 추가
+    def __init__(self, character, ground_obj, x, y, next_mode=None):  # <-- ground_obj 추가
         self.image = load_image('background/portal.png')
         self.character = character
         self.ground = ground_obj  # 🌟 Ground 객체 저장
         self.world_x = x
         self.world_y = y
+        self.next_stage_mode = next_mode
 
     # 2. 카메라 오프셋을 계산하고 제한하는 함수 추가
     def update(self):
