@@ -128,7 +128,7 @@ class skill_2:
         return self.x - 16, self.y - 16, self.x + 16, self.y + 16
 
     def handle_collision(self, group, other):
-        if group == 'skill1:monster':
+        if group == 'skill:monster':
             if self.active:
                 self.active = False
                 game_world.remove_object(self)

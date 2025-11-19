@@ -403,6 +403,7 @@ class Character:
                 self.state_machine.handle_state_event(('FINISH', None))
         if self.direction_y == 0 and self.y > 220:
             self.direction_y = -1  # 하강 시작
+
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
@@ -428,6 +429,14 @@ class Character:
 
     def handle_collision(self, group, other):
         if group == 'character:monster':
+            is_dashing = self.state_machine.cur_state == self.RUN and self.RUN.dash
+            if is_dashing:
+                # 몬스터와 충돌 시 돌진 중단 및 IDLE 상태로 전환
+                self.RUN.dash = False
+                self.RUN.max_distance = 0
+                self.direction_x = 0
+                self.state_machine.handle_state_event(('FINISH', None))
+
             if self.invincible_time > 0:
                 return
 
