@@ -27,7 +27,7 @@ def init(job_name):
     global platform
 
     running = True
-    characters = Character(job_name)
+    characters = Character(job_name, 200, 220)
     game_world.add_object(characters, 1)
 
     monster = Monster(characters)

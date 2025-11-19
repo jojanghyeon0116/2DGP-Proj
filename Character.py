@@ -332,9 +332,10 @@ class Projectile:
 
 class Character:
     image = None
-    def __init__(self, job):
+    def __init__(self, job, x = 400,y = 220):
         self.job = job
-        self.x, self.y = 400, 220
+        self.x, self.y = x, y
+        self.min_y = y
         self.frame = 0
         self.direction_x = 0
         self.direction_y = 0
@@ -398,14 +399,14 @@ class Character:
             self.direction_y = -1  # 하강 시작
 
                 # 3. 지면(y=220) 착지 처리
-        if self.y < 220:
-            self.y = 220
+        if self.y < self.min_y:
+            self.y = self.min_y
             self.direction_y = 0
 
                 # 지면에 닿았을 때 JUMP 상태를 IDLE로 전환
             if self.state_machine.cur_state == self.JUMP:
                 self.state_machine.handle_state_event(('FINISH', None))
-        if self.direction_y == 0 and self.y > 220:
+        if self.direction_y == 0 and self.y > self.min_y:
             self.direction_y = -1  # 하강 시작
 
     def draw(self):
