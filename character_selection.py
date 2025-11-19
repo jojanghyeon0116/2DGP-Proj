@@ -1,6 +1,6 @@
 import game_framework
 from pico2d import *
-import play_mode
+import stage_1
 from Character import Character
 
 CHARACTER_POSITIONS = {
@@ -49,19 +49,19 @@ def handle_events():
                     # 1. Swordsman 선택 영역 확인
                     if CHARACTER_POSITIONS['Swordsman'][0] <= mouse_x <= CHARACTER_POSITIONS['Swordsman'][1]:
                         characterjob = 'Swordsman'
-                        game_framework.change_mode(play_mode, characterjob)
+                        game_framework.change_mode(stage_1, characterjob)
                         clear_canvas()
 
                     # 2. Wizard 선택 영역 확인
                     elif CHARACTER_POSITIONS['Wizard'][0] <= mouse_x <= CHARACTER_POSITIONS['Wizard'][1]:
                         characterjob = 'Wizard'
-                        game_framework.change_mode(play_mode, characterjob)
+                        game_framework.change_mode(stage_1, characterjob)
                         clear_canvas()
 
                     # 3. Archer 선택 영역 확인
                     elif CHARACTER_POSITIONS['Archer'][0] <= mouse_x <= CHARACTER_POSITIONS['Archer'][1]:
                         characterjob = 'Archer'
-                        game_framework.change_mode(play_mode, characterjob)
+                        game_framework.change_mode(stage_1, characterjob)
                         clear_canvas()
 def pause(): pass
 def resume(): pass
