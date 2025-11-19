@@ -45,7 +45,7 @@ class skill_1:
         elif self.job == 'Archer':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 4
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
-        if self.x < 25 or self.x > 800 - 25:
+        if self.x < 0 or self.x > 1024:
             if self.active:
                 self.active = False
                 game_world.remove_object(self)
@@ -104,7 +104,7 @@ class skill_2:
         elif self.job == 'Archer':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
             self.x += self.velocity * RUN_SPEED_PPS * game_framework.frame_time
-        if self.x < 25 or self.x > 800 - 25:
+        if self.x < 0 or self.x > 1024:
             if self.active:
                 self.active = False
                 game_world.remove_object(self)
@@ -155,7 +155,7 @@ class skill_3:
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 3
         elif self.job == 'Archer':
             self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 6
-        if self.x < 25 or self.x > 800 - 25:
+        if self.x < 0 or self.x > 1024:
             if self.active:
                 self.active = False
                 game_world.remove_object(self)
