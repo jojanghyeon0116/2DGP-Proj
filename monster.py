@@ -105,11 +105,14 @@ class Monster:
         draw_rectangle(screen_x - 32, self.y - 64, screen_x + 32, self.y + 10)
 
     def get_bb(self, offset_x=None):
-        return self.x - 32, self.y - 64, self.x + 32, self.y + 10
+        global camera_offset_x
+        screen_x = self.x - camera_offset_x
+        return screen_x - 32, self.y - 64, screen_x + 32, self.y + 10
 
     def handle_collision(self, group, other):
         if group == 'character:monster':
-            pass
+            if self.attacking:
+                other.handle_collision('character:monster', self)
         elif group == 'hitbox:monster':
             if not other.damage_dealt:
                 other.damage_dealt = True
@@ -120,10 +123,7 @@ class Monster:
                 self.hp -= other.damage
                 if self.hp <= 0:
                     self.image = load_image('Skeleton/Dead.png')
-                try:
-                    game_world.remove_object(other)
-                except Exception as e:
-                    pass
+
         elif group == 'skill:monster':
             self.hit = True
             self.knockback_timer = 0.2

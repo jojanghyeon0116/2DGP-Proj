@@ -188,11 +188,7 @@ class attack:
             if self.character.job == 'Swordsman':
                 hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1, self.character.attack_damage)
                 game_world.add_object(hitbox, 1)  # Layer 1에 Hitbox 추가
-
-                from monster import Monster
-                for obj in game_world.world[1]:
-                    if isinstance(obj, Monster):
-                        game_world.add_collision_pair('hitbox:monster', hitbox, obj)
+                game_world.add_collision_pair('hitbox:monster', hitbox, None)
             if self.character.job == 'Archer' or self.character.job == 'Wizard':
                 projectile = Projectile(self.character)
                 game_world.add_object(projectile, 1)
@@ -287,7 +283,6 @@ class AttackHitbox:
         return self.x - 20, self.y - 40, self.x + 20, self.y + 20
 
     def handle_collision(self, group, other):
-        # 이 객체는 몬스터에게 피해를 입히는 역할만 하므로, 몬스터가 처리합니다.
         pass
 
 class Projectile:
