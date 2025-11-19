@@ -213,7 +213,12 @@ class Shop:
             final_screen_x = min(max_screen_x, final_screen_x)
 
         # 5. 제한된 좌표로 배경을 그립니다.
-        self.image.draw(final_screen_x, self.screen_height // 2.0)
+        self.image.draw(
+            self.screen_width // 2,  # 화면 중심 X
+            self.screen_height // 2.0,  # 화면 중심 Y
+            self.screen_width,  # 강제 너비 (1024)
+            self.screen_height  # 강제 높이 (800)
+        )
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
