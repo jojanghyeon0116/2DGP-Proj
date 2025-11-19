@@ -419,8 +419,10 @@ class Character:
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
         if up_down(('INPUT', event)) and self.can_enter_portal is not None:
-            import stage_2
-            game_framework.change_mode(stage_2, self.job)
+            next_mode = self.can_enter_portal.next_stage_mode
+            if next_mode:
+                game_framework.change_mode(next_mode, self.job)
+                return  # 이벤트 처리 완료
     def Skill_1(self):
         skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
         game_world.add_object(skill1, 1)
