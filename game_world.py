@@ -35,7 +35,7 @@ def render():
             o.draw()
 
 def clear():
-    global world
+    global world, collision_pairs
     for layer in world:
         layer.clear()
     objects = [[] for _ in range(4)]
