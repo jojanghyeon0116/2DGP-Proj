@@ -48,6 +48,9 @@ def hit(e):
 def dead(e):
     return e[0] == 'DEAD'
 
+def up_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_UP
+
 action_finish = lambda e: e[0] == 'FINISH'
 
 class Idle:
@@ -346,6 +349,7 @@ class Character:
         self.jump_peak_y = 0
         self.knockback_distance = 0
         self.attack_damage = 10
+        self.can_enter_portal = None
         self.IDLE = Idle(self)
         self.ATTACK = attack(self)
         self.JUMP = jump(self)
@@ -413,7 +417,9 @@ class Character:
 
     def handle_event(self, event):
         self.state_machine.handle_state_event(('INPUT', event))
-
+        if up_down(('INPUT', event)) and self.can_enter_portal is not None:
+            import stage_2
+            game_framework.change_mode(stage_2, self.job)
     def Skill_1(self):
         skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
         game_world.add_object(skill1, 1)
@@ -486,3 +492,6 @@ class Character:
                 self.x = ground_left + 32
             elif self.x + 32> ground_right:
                 self.x = ground_right - 32
+        elif group == 'character:portal':
+            self.can_enter_portal = other
+

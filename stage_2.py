@@ -30,6 +30,7 @@ def init(job_name):
     game_world.add_object(characters, 1)
 
     shop = Shop(characters)
+    game_world.add_object(shop, 0)
 
     portal = Portal(characters, shop, 1200, 220)
     game_world.add_object(portal, 0)

@@ -215,5 +215,9 @@ class Shop:
         # 5. 제한된 좌표로 배경을 그립니다.
         self.image.draw(final_screen_x, self.screen_height // 2.0)
         draw_rectangle(*self.get_bb())
+
     def get_bb(self):
         return 0, 0, self.screen_width, self.screen_height
+
+    def handle_collision(self, group, other):
+        pass
