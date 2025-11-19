@@ -49,6 +49,7 @@ def init(job_name):
     game_world.add_collision_pair('projectile:monster', None, monster)
     game_world.add_collision_pair('character:platform', characters, platform)
     game_world.add_collision_pair('character:back_ground', characters, back_ground)
+    game_world.add_collision_pair('character:portal', characters, portal)
 
 def update():
     global platform  # 🌟 platform 객체 사용 선언
