@@ -11,6 +11,8 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 class item:
     image = None
+    camera_offset_x = 0
+    screen_x = 0
     def __init__(self, item_type, x = 200, y = 350):
         self.x = x
         self.y = y
@@ -36,11 +38,12 @@ class item:
 
 
     def draw(self):
-        self.image.draw(self.x, self.y, 32, 32)
+        item.screen_x = self.x - item.camera_offset_x
+        self.image.draw(item.screen_x, self.y, 32, 32)
         draw_rectangle(*self.get_bb())
 
     def get_bb(self):
-        return self.x - 16, self.y - 16, self.x + 16, self.y + 16
+        return item.screen_x - 16, self.y - 16, item.screen_x + 16, self.y + 16
 
     def handle_collision(self, group, other):
         if group == 'character:item':

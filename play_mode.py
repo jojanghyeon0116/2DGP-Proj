@@ -51,6 +51,7 @@ def update():
     offset_value = platform.update()
 
     monster.camera_offset_x = offset_value
+    item.camera_offset_x = offset_value
     game_world.update()
     game_world.handle_collisions()
 
