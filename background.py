@@ -125,6 +125,9 @@ class Portal:
 
     # 2. 카메라 오프셋을 계산하고 제한하는 함수 추가
     def update(self):
+        from background import Shop  # Shop 클래스 정의가 같은 파일에 있지만, 명시적으로 임포트합니다.
+        if isinstance(self.ground, Shop):
+            return 0
         # Ground 클래스의 __init__에서 저장된 속성 사용
         bg_width = self.ground.bg_width
         screen_width = self.ground.screen_width
