@@ -32,7 +32,7 @@ def init(job_name):
     shop = Shop(characters)
     game_world.add_object(shop, 0)
 
-    portal = Portal(characters, shop, 1200, 220)
+    portal = Portal(characters, shop, 800, 200)
     game_world.add_object(portal, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
