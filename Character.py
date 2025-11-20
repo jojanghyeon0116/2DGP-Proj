@@ -303,7 +303,7 @@ class Projectile:
 
     def update(self):
         self.x += self.direction_x * self.speed * game_framework.frame_time * self.speed
-        if self.x < 0 or self.x > 800:
+        if self.x < 0 or self.x > 1024:
             game_world.remove_object(self)
 
     def draw(self):
