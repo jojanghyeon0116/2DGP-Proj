@@ -450,13 +450,13 @@ class Character:
             if self.invincible_time > 0:
                 return
 
-            self.hp -= 10
             print(f'Character HP: {self.hp}')
 
             self.invincible_time = self.max_invincible_time
             self.knockback_distance = other.direction
             if self.hp > 0 and other.attacking:
                 self.state_machine.handle_state_event(('HIT', None))
+                self.hp -= 10
             elif self.hp <= 0 and other.attacking:
                 # 1. DEAD 상태로 강제 전환 (StateMachine 객체 교체)
                 self.state_machine.cur_state = self.DEAD
