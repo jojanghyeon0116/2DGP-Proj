@@ -269,6 +269,7 @@ class dead:
 class AttackHitbox:
     def __init__(self, x, y, direction_x, damage):
         self.x, self.y = x + 50 * (direction_x or 1), y
+        self.direction_x = direction_x
         self.lifetime = 0.15  # 판정 유지 시간 (0.15초)
         self.damage_dealt = False # 🚩 피해를 한 번만 주도록 플래그 추가
         self.damage = damage
