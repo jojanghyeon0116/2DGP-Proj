@@ -8,6 +8,7 @@ from Character import Character
 from background import Ground, Platform, Portal
 import monster
 import stage_2
+import UI
 
 def handle_events():
     global running
@@ -26,7 +27,7 @@ def init(job_name):
     global characters
     global running
     global platform
-
+    global health_bar
     running = True
     characters = Character(job_name, 200, 220)
     game_world.add_object(characters, 1)
@@ -42,6 +43,9 @@ def init(job_name):
 
     portal = Portal(characters, back_ground, 1200, 220, next_mode=stage_2)
     game_world.add_object(portal, 0)
+
+    health_bar = UI.HealthBar(characters)
+    game_world.add_object(health_bar, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:monster', characters, monster)
