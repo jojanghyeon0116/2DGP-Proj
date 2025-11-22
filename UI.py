@@ -5,7 +5,6 @@ import game_framework
 class HealthBar:
     def __init__(self, character):
         self.character = character
-        self.max_hp = character.hp
 
         self.fill_image = load_image('UI/health_bar_fill.png')  # 채워진 게이지 이미지
 
@@ -20,9 +19,11 @@ class HealthBar:
         pass
 
     def draw(self):
-        current_ratio = self.character.hp / self.max_hp
+        max_hp_value = self.character.max_hp
+        current_ratio = self.character.hp / max_hp_value
 
-        text_content = f'{int(self.character.hp)} / {int(self.max_hp)}'
+        # 🌟 텍스트 표시에도 max_hp_value 사용
+        text_content = f'{int(self.character.hp)} / {int(max_hp_value)}'
         text_color = (255, 255, 255)
 
         current_fill_width = int(self.width * current_ratio)

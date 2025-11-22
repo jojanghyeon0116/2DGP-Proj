@@ -23,13 +23,13 @@ def handle_events():
         else:
             characters.handle_event(event)
 
-def init(job_name):
+def init(job_name, current_hp=None):
     global characters
     global running
     global platform
     global health_bar
     running = True
-    characters = Character(job_name, 200, 220)
+    characters = Character(job_name, 200, 220, current_hp=current_hp)
     game_world.add_object(characters, 1)
 
     monster = Monster(characters)
