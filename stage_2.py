@@ -7,6 +7,7 @@ from Character import Character
 from background import Portal, Shop
 import monster
 import stage_3
+import UI
 def handle_events():
     global running
     global skill_effect
@@ -34,6 +35,9 @@ def init(job_name):
 
     portal = Portal(characters, shop, 800, 200, next_mode=stage_3)
     game_world.add_object(portal, 0)
+
+    health_bar = UI.HealthBar(characters)
+    game_world.add_object(health_bar, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:back_ground', characters, shop)

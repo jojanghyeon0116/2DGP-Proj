@@ -6,6 +6,8 @@ import game_framework
 from Character import Character
 from background import Boss
 import monster
+import UI
+
 
 def handle_events():
     global running
@@ -31,6 +33,9 @@ def init(job_name):
 
     boss = Boss(characters)
     game_world.add_object(boss, 0)
+
+    health_bar = UI.HealthBar(characters)
+    game_world.add_object(health_bar, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:back_ground', characters, boss)
