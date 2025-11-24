@@ -37,6 +37,13 @@ def init(job_name, current_hp=None):
     health_bar = UI.HealthBar(characters)
     game_world.add_object(health_bar, 0)
 
+    skill_icon1 = UI.Skill_icon1(characters)
+    game_world.add_object(skill_icon1, 0)
+    skill_icon2 = UI.Skill_icon2(characters)
+    game_world.add_object(skill_icon2, 0)
+    skill_icon3 = UI.Skill_icon3(characters)
+    game_world.add_object(skill_icon3, 0)
+
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:back_ground', characters, boss)
 
