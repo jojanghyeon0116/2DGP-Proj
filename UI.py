@@ -40,3 +40,36 @@ class HealthBar:
             current_fill_width, self.height
         )
         self.font.draw(100, 760, text_content, text_color)
+
+class Skill_icon1:
+    def __init__(self, character):
+        self.character = character
+        self.image = load_image(f'{self.character.job}/Skill_icon1.png')
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self.image.draw(400, 50, 50, 50)
+
+class Skill_icon2:
+    def __init__(self, character):
+        self.character = character
+        self.image = load_image(f'{self.character.job}/Skill_icon2.png')
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self.image.draw(500, 50, 50, 50)
+
+class Skill_icon3:
+    def __init__(self, character):
+        self.character = character
+        self.image = load_image(f'{self.character.job}/Skill_icon3.png')
+
+    def update(self):
+        pass
+
+    def draw(self):
+        self.image.draw(600, 50, 50, 50)
