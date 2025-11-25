@@ -22,13 +22,13 @@ def handle_events():
         else:
             characters.handle_event(event)
 
-def init(job_name, current_hp=None):
+def init(job_name, current_hp=None, current_money=None):
     global characters
     global running
     global platform
 
     running = True
-    characters = Character(job_name, 400, current_hp=current_hp)
+    characters = Character(job_name, 400, current_hp=current_hp, current_money=current_money)
     game_world.add_object(characters, 1)
 
     boss = Boss(characters)
@@ -43,6 +43,9 @@ def init(job_name, current_hp=None):
     game_world.add_object(skill_icon2, 0)
     skill_icon3 = UI.Skill_icon3(characters)
     game_world.add_object(skill_icon3, 0)
+
+    money_display = UI.MoneyDisplay(characters)
+    game_world.add_object(money_display, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:back_ground', characters, boss)
