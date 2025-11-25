@@ -73,3 +73,22 @@ class Skill_icon3:
 
     def draw(self):
         self.image.draw(600, 50, 50, 50)
+
+class MoneyDisplay:
+    def __init__(self, character):
+        self.character = character
+        self.font = load_font('ENCR10B.TTF', 16)
+        self.x = 80  # 좌측 하단에 가까운 X 위치
+        self.y = 50   # 좌측 하단에 가까운 Y 위치
+
+        self.image = load_image('item/item2.png')
+
+    def update(self):
+        pass
+
+    def draw(self):
+        # 텍스트 내용: 현재 돈(money)
+        text_content = f'{self.character.money}'
+        text_color = (255, 255, 0) # 돈은 눈에 잘 띄게 노란색으로 설정
+        self.image.draw(50, 50, 32, 32)
+        self.font.draw(self.x, self.y, text_content, text_color)
