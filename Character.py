@@ -333,7 +333,7 @@ class Projectile:
 
 class Character:
     image = None
-    def __init__(self, job, x = 400,y = 220,current_hp=None):
+    def __init__(self, job, x = 400,y = 220,current_hp=None, current_money=None):
         self.job = job
         self.x, self.y = x, y
         self.min_y = y
@@ -343,7 +343,7 @@ class Character:
         self.direction = 0
         self.max_hp = 110
         self.hp = current_hp if current_hp is not None else 110  # 🌟 전달받은 체력이 있으면 사용, 없으면 110으로 초기화
-        self.money = 0
+        self.money = current_money if current_money is not None else 0
         self.exp = 0
         self.speed = 1
         self.invincible_time = 0.0
@@ -423,7 +423,7 @@ class Character:
         if up_down(('INPUT', event)) and self.can_enter_portal is not None:
             next_mode = self.can_enter_portal.next_stage_mode
             if next_mode:
-                game_framework.change_mode(next_mode, self.job, self.hp)
+                game_framework.change_mode(next_mode, self.job, self.hp, self.money)
                 return  # 이벤트 처리 완료
     def Skill_1(self):
         skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
