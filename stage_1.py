@@ -23,7 +23,7 @@ def handle_events():
         else:
             characters.handle_event(event)
 
-def init(job_name, current_hp=None, current_money=None):
+def init(job_name, current_hp=None, current_money=None, current_level=None):
     global characters
     global running
     global platform
@@ -58,6 +58,9 @@ def init(job_name, current_hp=None, current_money=None):
 
     money_display = UI.MoneyDisplay(characters)
     game_world.add_object(money_display, 0)
+
+    level = UI.Level(characters)
+    game_world.add_object(level, 0)
 
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:monster', characters, monster)

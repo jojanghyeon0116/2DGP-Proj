@@ -51,6 +51,9 @@ def init(job_name, current_hp=None, current_money=None):
     money_display = UI.MoneyDisplay(characters)
     game_world.add_object(money_display, 0)
 
+    level = UI.Level(characters)
+    game_world.add_object(level, 0)
+
     game_world.add_collision_pair('character:item', characters, None)
     game_world.add_collision_pair('character:back_ground', characters, shop)
     game_world.add_collision_pair('character:portal', characters, portal)
