@@ -92,3 +92,18 @@ class MoneyDisplay:
         text_color = (255, 255, 0) # 돈은 눈에 잘 띄게 노란색으로 설정
         self.image.draw(50, 50, 32, 32)
         self.font.draw(self.x, self.y, text_content, text_color)
+
+class Level:
+    def __init__(self, character):
+        self.character = character
+        self.font = load_font('ENCR10B.TTF', 16)
+        self.x = 40
+        self.y = 20
+
+    def update(self):
+        pass
+
+    def draw(self):
+        text_content = f'Lv : {self.character.level}'
+        text_color = (255, 0, 0)
+        self.font.draw(self.x, self.y, text_content, text_color)
