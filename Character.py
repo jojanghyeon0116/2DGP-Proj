@@ -426,7 +426,7 @@ class Character:
         if up_down(('INPUT', event)) and self.can_enter_portal is not None:
             next_mode = self.can_enter_portal.next_stage_mode
             if next_mode:
-                game_framework.change_mode(next_mode, self.job, self.hp, self.money)
+                game_framework.change_mode(next_mode, self.job, self.hp, self.money, self.level)
                 return  # 이벤트 처리 완료
     def Skill_1(self):
         skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
