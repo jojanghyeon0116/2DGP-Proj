@@ -110,7 +110,7 @@ class Level:
 
     def draw(self):
         text_content = f'Lv : {self.character.level}'
-        text_color = (255, 0, 0)
+        text_color = (255, 255, 255)
         self.font.draw(self.x, self.y, text_content, text_color)
 
         max_exp_value = self.character.max_exp # 최대 경험치
@@ -129,4 +129,4 @@ class Level:
 
         text_content = f'EXP: {int(self.character.exp)} / {int(max_exp_value)}'
         text_color = (255, 255, 255)
-        self.font.draw(self.x, self.y + self.height // 2 - 8, text_content, text_color)
+        self.font.draw(self.x + 80, self.y, text_content, text_color)
