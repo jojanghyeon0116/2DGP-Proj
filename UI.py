@@ -96,9 +96,14 @@ class MoneyDisplay:
 class Level:
     def __init__(self, character):
         self.character = character
-        self.font = load_font('ENCR10B.TTF', 16)
-        self.x = 40
+        self.background_image = load_image('UI/exp_bar_background.png')
+        self.fill_image = load_image('UI/exp_bar.png')
+        self.x = 30
         self.y = 20
+        self.width = 300
+        self.height = 20
+
+        self.font = load_font('ENCR10B.TTF', 16)
 
     def update(self):
         pass
@@ -107,3 +112,21 @@ class Level:
         text_content = f'Lv : {self.character.level}'
         text_color = (255, 0, 0)
         self.font.draw(self.x, self.y, text_content, text_color)
+
+        max_exp_value = self.character.max_exp # 최대 경험치
+        current_ratio = self.character.exp / max_exp_value # 현재 경험치 비율
+
+        self.background_image.draw_to_origin(self.x - 20, self.y, self.width, self.height)
+
+        current_fill_width = int(self.width * current_ratio)
+
+        self.fill_image.clip_draw_to_origin(
+            0, 0,
+            int(self.fill_image.w * current_ratio), self.fill_image.h,
+            self.x - 20, self.y,
+            current_fill_width, self.height
+        )
+
+        text_content = f'EXP: {int(self.character.exp)} / {int(max_exp_value)}'
+        text_color = (255, 255, 255)
+        self.font.draw(self.x, self.y + self.height // 2 - 8, text_content, text_color)
