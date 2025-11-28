@@ -54,7 +54,7 @@ class item:
                 other.money += 100
                 print(f'Money : {other.money}')
             elif self.type == 2:
-                other.exp += 50
+                other.exp += 10
                 print(f'Exp : {other.exp}')
             elif self.type == 3:
                 other.attack_damage += 5
