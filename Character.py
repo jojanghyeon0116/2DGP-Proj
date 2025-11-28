@@ -346,6 +346,7 @@ class Character:
         self.hp = current_hp if current_hp is not None else 110  # 🌟 전달받은 체력이 있으면 사용, 없으면 110으로 초기화
         self.money = current_money if current_money is not None else 0
         self.exp = 0
+        self.max_exp = 100
         self.speed = 1
         self.invincible_time = 0.0
         self.max_invincible_time = 0.5
@@ -411,7 +412,7 @@ class Character:
                 self.state_machine.handle_state_event(('FINISH', None))
         if self.direction_y == 0 and self.y > self.min_y:
             self.direction_y = -1  # 하강 시작
-        if self.exp >= 100:
+        if self.exp >= self.max_exp:
             self.level += 1
             self.exp -= 100
     def draw(self):
