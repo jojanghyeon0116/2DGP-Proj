@@ -14,7 +14,7 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
-def space_down(e): # e is space down ?
+def space_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
 def right_down(e):
@@ -75,6 +75,8 @@ class Idle:
             self.character.Skill_2()
         elif c_down(e):
             self.character.Skill_1()
+            if self.character.job == 'Swordsman':
+                self.dash = True
 
 
     def do(self):
@@ -423,12 +425,21 @@ class Character:
         return self.x - 32, self.y - 64, self.x + 32 , self.y + 10
 
     def handle_event(self, event):
-        self.state_machine.handle_state_event(('INPUT', event))
         if up_down(('INPUT', event)) and self.can_enter_portal is not None:
             next_mode = self.can_enter_portal.next_stage_mode
             if next_mode:
                 game_framework.change_mode(next_mode, self.job, self.hp, self.money, self.level)
-                return  # 이벤트 처리 완료
+                return
+        if c_down(('INPUT', event)):
+            if self.level < 1:
+                return
+        if x_down(('INPUT', event)):
+            if self.level < 2:
+                return
+        if z_down(('INPUT', event)):
+            if self.level < 3:
+                return
+        self.state_machine.handle_state_event(('INPUT', event))
     def Skill_1(self):
         if self.level >= 1:
             skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
