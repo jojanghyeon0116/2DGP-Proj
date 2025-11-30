@@ -332,6 +332,9 @@ class Projectile:
             game_world.remove_object(self)
 
 
+SKILL_1_COOLTIME = 2.0
+SKILL_2_COOLTIME = 5.0
+SKILL_3_COOLTIME = 10.0
 
 class Character:
     image = None
@@ -343,7 +346,7 @@ class Character:
         self.direction_x = 0
         self.direction_y = 0
         self.direction = 0
-        self.level = 0
+        self.level = 1
         self.max_hp = 110
         self.hp = current_hp if current_hp is not None else 110  # 🌟 전달받은 체력이 있으면 사용, 없으면 110으로 초기화
         self.money = current_money if current_money is not None else 0
@@ -357,6 +360,9 @@ class Character:
         self.knockback_distance = 0
         self.attack_damage = 10
         self.can_enter_portal = None
+        self.skill1_last_used_time = 0.0
+        self.skill2_last_used_time = 0.0
+        self.skill3_last_used_time = 0.0
         self.IDLE = Idle(self)
         self.ATTACK = attack(self)
         self.JUMP = jump(self)
@@ -430,31 +436,46 @@ class Character:
             if next_mode:
                 game_framework.change_mode(next_mode, self.job, self.hp, self.money, self.level)
                 return
+        current_time = get_time()
+        skill_used = False
         if c_down(('INPUT', event)):
-            if self.level < 1:
+            skill_used = True
+            if self.level >= 1 and current_time - self.skill1_last_used_time >= SKILL_1_COOLTIME:
+                self.Skill_1()
+                self.state_machine.handle_state_event(('INPUT', event))
                 return
         if x_down(('INPUT', event)):
-            if self.level < 2:
+            skill_used = True
+            if self.level >= 2 and current_time - self.skill2_last_used_time >= SKILL_2_COOLTIME:
+                self.Skill_2()
+                self.state_machine.handle_state_event(('INPUT', event))
                 return
         if z_down(('INPUT', event)):
-            if self.level < 3:
+            skill_used = True
+            if self.level >= 3 and current_time - self.skill3_last_used_time >= SKILL_3_COOLTIME:
+                self.Skill_3()
+                self.state_machine.handle_state_event(('INPUT', event))
                 return
-        self.state_machine.handle_state_event(('INPUT', event))
+        if not skill_used:
+            self.state_machine.handle_state_event(('INPUT', event))
     def Skill_1(self):
         if self.level >= 1:
             skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
             game_world.add_object(skill1, 1)
             game_world.add_collision_pair('skill:monster', skill1, None)
+            self.skill1_last_used_time = get_time()
     def Skill_2(self):
         if self.level >= 2:
             skill2 = skill_2(self.x, self.y, self.direction_x, self.job)
             game_world.add_object(skill2, 1)
             game_world.add_collision_pair('skill:monster', skill2, None)
+            self.skill2_last_used_time = get_time()
     def Skill_3(self):
         if self.level >= 3:
             skill3 = skill_3(self.x, self.y, self.direction_x, self.job)
             game_world.add_object(skill3, 1)
             game_world.add_collision_pair('skill:monster', skill3, None)
+            self.skill3_last_used_time = get_time()
 
     def handle_collision(self, group, other):
         if group == 'character:monster':
