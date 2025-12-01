@@ -1,6 +1,6 @@
 from pico2d import *
 import game_framework
-
+import Character
 
 class HealthBar:
     def __init__(self, character):
@@ -45,34 +45,59 @@ class Skill_icon1:
     def __init__(self, character):
         self.character = character
         self.image = load_image(f'{self.character.job}/Skill_icon1.png')
-
+        self.font = load_font('ENCR10B.TTF', 16)
     def update(self):
         pass
 
     def draw(self):
         self.image.draw(400, 50, 50, 50)
+        current_time = get_time()
+        cooltime = Character.SKILL_1_COOLTIME
+        time_since_last_use = current_time - self.character.skill1_last_used_time
+        remaining_cooltime = cooltime - time_since_last_use
+        if remaining_cooltime > 0 and self.character.level >= 1:
+            text_content = f'{remaining_cooltime:.1f}'
+            text_color = (255, 255, 255)
+            self.font.draw(385, 50, text_content, text_color)
 
 class Skill_icon2:
     def __init__(self, character):
         self.character = character
         self.image = load_image(f'{self.character.job}/Skill_icon2.png')
+        self.font = load_font('ENCR10B.TTF', 16)
 
     def update(self):
         pass
 
     def draw(self):
         self.image.draw(500, 50, 50, 50)
+        current_time = get_time()
+        cooltime = Character.SKILL_2_COOLTIME
+        time_since_last_use = current_time - self.character.skill2_last_used_time
+        remaining_cooltime = cooltime - time_since_last_use
+        if remaining_cooltime > 0 and self.character.level >= 2:
+            text_content = f'{remaining_cooltime:.1f}'
+            text_color = (255, 255, 255)
+            self.font.draw(485, 50, text_content, text_color)
 
 class Skill_icon3:
     def __init__(self, character):
         self.character = character
         self.image = load_image(f'{self.character.job}/Skill_icon3.png')
-
+        self.font = load_font('ENCR10B.TTF', 16)
     def update(self):
         pass
 
     def draw(self):
         self.image.draw(600, 50, 50, 50)
+        current_time = get_time()
+        cooltime = Character.SKILL_3_COOLTIME
+        time_since_last_use = current_time - self.character.skill3_last_used_time
+        remaining_cooltime = cooltime - time_since_last_use
+        if remaining_cooltime > 0 and self.character.level >= 3:
+            text_content = f'{remaining_cooltime:.1f}'
+            text_color = (255, 255, 255)
+            self.font.draw(585, 50, text_content, text_color)
 
 class MoneyDisplay:
     def __init__(self, character):
