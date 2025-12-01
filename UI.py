@@ -50,11 +50,16 @@ class Skill_icon1:
         pass
 
     def draw(self):
-        self.image.draw(400, 50, 50, 50)
         current_time = get_time()
         cooltime = Character.SKILL_1_COOLTIME
         time_since_last_use = current_time - self.character.skill1_last_used_time
         remaining_cooltime = cooltime - time_since_last_use
+        if remaining_cooltime > 0:
+            self.image.opacify(0.3)
+        elif remaining_cooltime <= 0:
+            self.image.opacify(1.0)
+
+        self.image.draw(400, 50, 50, 50)
         if remaining_cooltime > 0 and self.character.level >= 1:
             text_content = f'{remaining_cooltime:.1f}'
             text_color = (255, 255, 255)
@@ -70,11 +75,15 @@ class Skill_icon2:
         pass
 
     def draw(self):
-        self.image.draw(500, 50, 50, 50)
         current_time = get_time()
         cooltime = Character.SKILL_2_COOLTIME
         time_since_last_use = current_time - self.character.skill2_last_used_time
         remaining_cooltime = cooltime - time_since_last_use
+        if remaining_cooltime > 0:
+            self.image.opacify(0.3)
+        elif remaining_cooltime <= 0:
+            self.image.opacify(1.0)
+        self.image.draw(500, 50, 50, 50)
         if remaining_cooltime > 0 and self.character.level >= 2:
             text_content = f'{remaining_cooltime:.1f}'
             text_color = (255, 255, 255)
@@ -89,11 +98,15 @@ class Skill_icon3:
         pass
 
     def draw(self):
-        self.image.draw(600, 50, 50, 50)
         current_time = get_time()
         cooltime = Character.SKILL_3_COOLTIME
         time_since_last_use = current_time - self.character.skill3_last_used_time
         remaining_cooltime = cooltime - time_since_last_use
+        if remaining_cooltime > 0:
+            self.image.opacify(0.3)
+        elif remaining_cooltime <= 0:
+            self.image.opacify(1.0)
+        self.image.draw(600, 50, 50, 50)
         if remaining_cooltime > 0 and self.character.level >= 3:
             text_content = f'{remaining_cooltime:.1f}'
             text_color = (255, 255, 255)
