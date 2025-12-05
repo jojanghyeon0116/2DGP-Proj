@@ -168,3 +168,12 @@ class Level:
         text_content = f'EXP: {int(self.character.exp)} / {int(max_exp_value)}'
         text_color = (255, 255, 255)
         self.font.draw(self.x + 80, self.y, text_content, text_color)
+
+class Shop_pannel:
+    def __init__(self):
+        self.image = load_image('UI/shop.png')
+    def update(self):
+        pass
+
+    def draw(self):
+        self.image.draw(get_canvas_width() // 2, get_canvas_height() // 2)
