@@ -1,4 +1,6 @@
 from pico2d import *
+
+import UI
 from Item import *
 import game_framework
 
@@ -12,7 +14,9 @@ def handle_events():
             game_framework.quit()
 
 def init():
-    pass
+    global pannel
+    pannel = UI.Shop_pannel()
+    game_world.add_object(pannel, 2)
 def update():
     pass
 
@@ -22,7 +26,7 @@ def draw():
     update_canvas()
 
 def finish():
-    game_world.clear()
+    game_world.remove_object(pannel)
 
 def pause(): pass
 def resume(): pass
