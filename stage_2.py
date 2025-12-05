@@ -8,6 +8,8 @@ from background import Portal, Shop
 import monster
 import stage_3
 import UI
+import Shop_window
+
 def handle_events():
     global running
     global skill_effect
@@ -18,10 +20,14 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            center_x, center_y = get_canvas_width() // 2, get_canvas_height() // 2
+            if center_x - 50 < event.x < center_x + 50 and center_y - 50 < event.y < center_y + 50:
+                game_framework.push_mode(Shop_window)
         else:
             characters.handle_event(event)
 
-def init(job_name, current_hp=None, current_money=None):
+def init(job_name, current_hp=None, current_money=None, current_level=None):
     global characters
     global running
     global platform
