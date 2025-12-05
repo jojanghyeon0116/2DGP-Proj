@@ -22,7 +22,7 @@ def handle_events():
         else:
             characters.handle_event(event)
 
-def init(job_name, current_hp=None, current_money=None):
+def init(job_name, current_hp=None, current_money=None, current_level=None):
     global characters
     global running
     global platform
