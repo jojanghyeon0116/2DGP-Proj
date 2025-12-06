@@ -172,8 +172,14 @@ class Level:
 class Shop_pannel:
     def __init__(self):
         self.image = load_image('UI/shop.png')
+        self.shop_item = load_image('item/item4.png')
+        self.shop_item2 = load_image('item/item5.png')
+        self.shop_item3 = load_image('item/item1.png')
     def update(self):
         pass
 
     def draw(self):
         self.image.draw(get_canvas_width() // 2, get_canvas_height() // 2)
+        self.shop_item.draw(400, 500, 70, 70)
+        self.shop_item2.draw(400, 400, 50, 50)
+        self.shop_item3.draw(400, 300, 50, 50)
