@@ -12,7 +12,9 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
-
+        elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
+            if 520 < event.x < 620 and 600 < event.y < 650:
+                game_framework.pop_mode()
 def init():
     global pannel
     pannel = UI.Shop_pannel()
