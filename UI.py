@@ -175,6 +175,8 @@ class Shop_pannel:
         self.shop_item = load_image('item/item4.png')
         self.shop_item2 = load_image('item/item5.png')
         self.shop_item3 = load_image('item/item1.png')
+        self.money = load_image('item/item2.png')
+        self.font = load_font('ENCR10B.TTF', 16)
     def update(self):
         pass
 
@@ -183,3 +185,9 @@ class Shop_pannel:
         self.shop_item.draw(400, 500, 70, 70)
         self.shop_item2.draw(400, 400, 50, 50)
         self.shop_item3.draw(400, 300, 50, 50)
+        self.money.draw(500, 500, 30, 30)
+        self.money.draw(500, 400, 30, 30)
+        self.money.draw(500, 300, 30, 30)
+        self.font.draw(530, 500, '20', (255, 255, 255))
+        self.font.draw(530, 400, '100', (255, 255, 255))
+        self.font.draw(530, 300, '50', (255, 255, 255))
