@@ -181,7 +181,7 @@ class Shop_pannel:
         pass
 
     def draw(self):
-        self.image.draw(get_canvas_width() // 2, get_canvas_height() // 2)
+        self.image.draw(get_canvas_width() // 2, get_canvas_height() // 2, 600, 600)
         self.shop_item.draw(400, 500, 70, 70)
         self.shop_item2.draw(400, 400, 50, 50)
         self.shop_item3.draw(400, 300, 50, 50)
