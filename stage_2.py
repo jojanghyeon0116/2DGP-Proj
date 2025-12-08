@@ -9,11 +9,11 @@ import monster
 import stage_3
 import UI
 import Shop_window
+import common
 
 def handle_events():
     global running
     global skill_effect
-    global characters
     event_list = get_events()
     for event in event_list:
         if event.type == SDL_QUIT:
@@ -25,44 +25,43 @@ def handle_events():
             if center_x - 50 < event.x < center_x + 50 and center_y - 50 < event.y < center_y + 50:
                 game_framework.push_mode(Shop_window)
         else:
-            characters.handle_event(event)
+            common.character.handle_event(event)
 
 def init(job_name, current_hp=None, current_money=None, current_level=None):
-    global characters
     global running
     global platform
 
     running = True
-    characters = Character(job_name, 400, 200, current_hp=current_hp, current_money=current_money)
-    game_world.add_object(characters, 1)
+    common.character = Character(job_name, 400, 200, current_hp=current_hp, current_money=current_money)
+    game_world.add_object(common.character, 1)
 
-    shop = Shop(characters)
+    shop = Shop(common.character)
     game_world.add_object(shop, 0)
 
-    portal = Portal(characters, shop, 800, 200, next_mode=stage_3)
+    portal = Portal(common.character, shop, 800, 200, next_mode=stage_3)
     game_world.add_object(portal, 0)
 
-    health_bar = UI.HealthBar(characters)
+    health_bar = UI.HealthBar(common.character)
     game_world.add_object(health_bar, 0)
 
-    skill_icon1 = UI.Skill_icon1(characters)
+    skill_icon1 = UI.Skill_icon1(common.character)
     game_world.add_object(skill_icon1, 0)
 
-    skill_icon2 = UI.Skill_icon2(characters)
+    skill_icon2 = UI.Skill_icon2(common.character)
     game_world.add_object(skill_icon2, 0)
 
-    skill_icon3 = UI.Skill_icon3(characters)
+    skill_icon3 = UI.Skill_icon3(common.character)
     game_world.add_object(skill_icon3, 0)
 
-    money_display = UI.MoneyDisplay(characters)
+    money_display = UI.MoneyDisplay(common.character)
     game_world.add_object(money_display, 0)
 
-    level = UI.Level(characters)
+    level = UI.Level(common.character)
     game_world.add_object(level, 0)
 
-    game_world.add_collision_pair('character:item', characters, None)
-    game_world.add_collision_pair('character:back_ground', characters, shop)
-    game_world.add_collision_pair('character:portal', characters, portal)
+    game_world.add_collision_pair('character:item', common.character, None)
+    game_world.add_collision_pair('character:back_ground', common.character, shop)
+    game_world.add_collision_pair('character:portal', common.character, portal)
 
 def update():
     game_world.update()

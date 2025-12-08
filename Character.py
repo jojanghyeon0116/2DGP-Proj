@@ -4,6 +4,8 @@ import game_framework
 import game_world
 from state_machine import StateMachine
 from Skill import skill_1, skill_2, skill_3
+import common
+
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 20.0  # Km / Hour
@@ -346,7 +348,7 @@ class Character:
         self.direction_x = 0
         self.direction_y = 0
         self.direction = 0
-        self.level = 1
+        self.level = 3
         self.max_hp = 110
         self.hp = current_hp if current_hp is not None else 110  # 🌟 전달받은 체력이 있으면 사용, 없으면 110으로 초기화
         self.money = current_money if current_money is not None else 0

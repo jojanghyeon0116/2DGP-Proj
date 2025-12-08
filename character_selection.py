@@ -2,6 +2,7 @@ import game_framework
 from pico2d import *
 import stage_1
 from Character import Character
+import common
 
 CHARACTER_POSITIONS = {
     # Swordsman 영역 (예시: x=100 ~ 300)
