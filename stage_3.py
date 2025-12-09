@@ -4,7 +4,7 @@ import game_world
 from Item import *
 import game_framework
 from Character import Character
-from background import Boss
+from background import Boss_stage
 import monster
 import UI
 import common
@@ -29,8 +29,8 @@ def init(job_name, current_hp=None, current_money=None, current_level=None):
     common.character = Character(job_name, 400, current_hp=current_hp, current_money=current_money)
     game_world.add_object(common.character, 1)
 
-    boss = Boss(common.character)
-    game_world.add_object(boss, 0)
+    boss_stage = Boss_stage(common.character)
+    game_world.add_object(boss_stage, 0)
 
     health_bar = UI.HealthBar(common.character)
     game_world.add_object(health_bar, 0)
@@ -49,7 +49,7 @@ def init(job_name, current_hp=None, current_money=None, current_level=None):
     game_world.add_object(level, 0)
 
     game_world.add_collision_pair('character:item', common.character, None)
-    game_world.add_collision_pair('character:back_ground', common.character, boss)
+    game_world.add_collision_pair('character:back_ground', common.character, boss_stage)
 
 def update():
     game_world.update()

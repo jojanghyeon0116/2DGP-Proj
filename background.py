@@ -231,7 +231,7 @@ class Shop:
     def handle_collision(self, group, other):
         pass
 
-class Boss:
+class Boss_stage:
     def __init__(self, character):
         self.image = load_image('background/background4.png')
         self.character = character
