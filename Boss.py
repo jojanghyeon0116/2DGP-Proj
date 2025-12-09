@@ -1,17 +1,17 @@
-import pico2d
+from pico2d import *
 
 
-class Monster:
+class Boss:
     image = None
 
     def __init__(self):
-        self.image = load_image('boss/spritesheets')
-        pass
+        self.image = load_image('boss/boss_sprite.png')
 
     def update(self):
         pass
+
     def draw(self):
-        pass
+        self.image.clip_draw(0, 640, 288, 160, 400, 380, 500, 500)
 
     def get_bb(self):
         pass

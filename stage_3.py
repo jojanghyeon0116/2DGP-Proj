@@ -8,6 +8,8 @@ from background import Boss_stage
 import monster
 import UI
 import common
+import Boss
+
 
 def handle_events():
     global running
@@ -26,7 +28,7 @@ def init(job_name, current_hp=None, current_money=None, current_level=None):
     global platform
 
     running = True
-    common.character = Character(job_name, 400, current_hp=current_hp, current_money=current_money)
+    common.character = Character(job_name, 400, 200, current_hp=current_hp, current_money=current_money)
     game_world.add_object(common.character, 1)
 
     boss_stage = Boss_stage(common.character)
@@ -47,6 +49,9 @@ def init(job_name, current_hp=None, current_money=None, current_level=None):
 
     level = UI.Level(common.character)
     game_world.add_object(level, 0)
+
+    boss = Boss.Boss()
+    game_world.add_object(boss, 1)
 
     game_world.add_collision_pair('character:item', common.character, None)
     game_world.add_collision_pair('character:back_ground', common.character, boss_stage)
