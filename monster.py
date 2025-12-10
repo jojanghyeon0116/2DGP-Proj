@@ -1,4 +1,6 @@
 import random
+
+import common
 import game_framework
 from pico2d import *
 import game_world
@@ -26,6 +28,7 @@ class Monster:
     HP_BAR_WIDTH = 80
     HP_BAR_HEIGHT = 10
     HP_BAR_OFFSET_Y = 15
+    HALF_WIDTH = 32
 
     def __init__(self, characters_obj):
         self.x, self.y = 600, 220
@@ -39,6 +42,7 @@ class Monster:
         self.max_hp = 100
         self.hit = False
         self.knockback_timer = 0.0
+        self.current_platform_bb = None
         if Monster.hp_fill_image is None:
             Monster.hp_fill_image = load_image('UI/health_bar_fill.png')
         if Monster.IMAGE_IDLE is None:
@@ -86,7 +90,7 @@ class Monster:
             elif distance_x_screen < 0:
                 self.direction = -1
 
-            if abs(distance_x_screen) < 100:
+            if abs(distance_x_screen) < 100 and common.character.y == self.y:
                 if abs(distance_x_screen) < 50 and not self.attacking:
                     self.attacking = True
                     self.walking = False
@@ -107,7 +111,26 @@ class Monster:
                     self.frame = 0
                     self.image = Monster.IMAGE_RUN
                 if self.walking:
-                    self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
+                    #self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
+                    next_x = self.x + self.direction * RUN_SPEED_PPS * game_framework.frame_time
+
+                    if self.current_platform_bb:
+                        platform_left, _, platform_right, _ = self.current_platform_bb
+
+                        if next_x - self.HALF_WIDTH < platform_left:
+                            self.x = platform_left + self.HALF_WIDTH
+                            self.direction *= -1  # 방향 반전
+                            self.frame = 0
+
+                        elif next_x + self.HALF_WIDTH > platform_right:
+                            self.x = platform_right - self.HALF_WIDTH
+                            self.direction *= -1  # 방향 반전
+                            self.frame = 0
+
+                        else:
+                            self.x = next_x  # 정상 이동
+                    else:
+                        self.x = next_x  # 플랫폼 정보가 없으면 자유롭게 이동
             else:
                 self.frame = 0
                 self.walking = False
@@ -183,3 +206,14 @@ class Monster:
             self.hp -= other.damage
             if self.hp <= 0:
                 self.image = Monster.IMAGE_DEAD
+        elif group.startswith('monster:platform'):
+            screen_platform_bb = other.get_bb()
+
+            # ⭐️ BB를 월드 좌표로 변환: 화면 좌표 + 현재 카메라 오프셋
+            platform_left_w = screen_platform_bb[0] + camera_offset_x
+            platform_right_w = screen_platform_bb[2] + camera_offset_x
+            platform_top_w = screen_platform_bb[3]
+
+            # 월드 BB 저장
+            self.current_platform_bb = (platform_left_w, screen_platform_bb[1], platform_right_w, platform_top_w)
+            self.y = platform_top_w + 64

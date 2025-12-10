@@ -96,7 +96,7 @@ class Platform:
         # screen_x = self.world_x - (raw_offset) <-- 이전 코드
         screen_x = self.world_x - clamped_offset  # <-- 수정
 
-        self.image.draw(screen_x, self.world_y, 100, 100)
+        self.image.draw(screen_x, self.world_y, 400, 100)
         # BB를 그릴 때도 screen_x를 전달하여 월드 좌표와 동기화되도록 합니다.
         draw_rectangle(*self.get_bb(screen_x))
 
@@ -104,13 +104,12 @@ class Platform:
 
     def get_bb(self, screen_x=None):
         if screen_x is None:
-            # get_bb가 draw가 아닌 곳에서 호출될 경우, 제한된 오프셋으로 계산합니다.
             clamped_offset = self.update()
             screen_x = self.world_x - clamped_offset
 
         screen_y = self.world_y
 
-        return screen_x - 40, screen_y - 25, screen_x + 40, screen_y + 25
+        return screen_x - 180, screen_y - 25, screen_x + 160, screen_y + 25
 
     def handle_collision(self, group, other):
         pass

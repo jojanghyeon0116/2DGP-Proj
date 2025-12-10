@@ -39,7 +39,7 @@ class attack_range:
     def handle_collision(self, group, other):
         if group == 'character:attack':
             if not self.damage:
-                #other.hp -= 50
+                other.hp -= 50
                 self.damage = True
 
 

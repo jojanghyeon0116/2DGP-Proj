@@ -513,7 +513,6 @@ class Character:
 
                 self.DEAD.enter(None)
         elif group == 'character:platform':
-            # 캐릭터의 바닥 좌표 계산: 캐릭터 중심 Y (self.y) - 64
             char_bottom = self.y - 64
 
             # other (Platform)의 BB 가져오기
