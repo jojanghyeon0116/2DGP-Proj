@@ -63,8 +63,7 @@ class Boss:
                 self.attack_object = attack_range(self.x, self.y, self.direction)
                 game_world.add_object(self.attack_object, 0)
 
-            # 공격 애니메이션이 끝났을 때 공격 객체 제거 (예: 16프레임 이후)
-            if int(self.frame_x) >= 15:
+            if int(self.frame_x) >= 14:
                 if self.attack_object is not None:
                     game_world.remove_object(self.attack_object)
                     self.attack_object = None
@@ -73,7 +72,7 @@ class Boss:
 
         distance = self.x - common.character.x
 
-        if self.type != 2:
+        if self.type != 2 and self.type != 3:
             if abs(distance) < 200:
                 if abs(distance) < 100:
                     self.type = 2
@@ -99,9 +98,11 @@ class Boss:
             self.frame_x = self.frame_x + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
             self.frame_y = 320
         elif self.type == 3:
-            self.frame_x = (self.frame_x + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 5
+            self.frame_x = self.frame_x + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
             self.frame_y = 160
-
+            if int(self.frame_x) >= 5:
+                self.type = 0
+                self.frame_x = 0
     def draw(self):
         current_frame = int(self.frame_x)
 
@@ -116,5 +117,7 @@ class Boss:
         return self.x - 50, self.y - 250, self.x + 50, self.y
 
     def handle_collision(self, group, other):
-        if group == 'character:boss':
-            pass
+        if group == 'boss:skill' or group == 'boss:hitbox':
+            game_world.remove_object(other)
+            self.type = 3
+            self.frame_x = 0

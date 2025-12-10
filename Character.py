@@ -196,6 +196,7 @@ class attack:
                 hitbox = AttackHitbox(self.character.x, self.character.y, self.character.direction_x or 1, self.character.attack_damage)
                 game_world.add_object(hitbox, 1)  # Layer 1에 Hitbox 추가
                 game_world.add_collision_pair('hitbox:monster', hitbox, None)
+                game_world.add_collision_pair('boss:hitbox', None, hitbox)
             if self.character.job == 'Archer' or self.character.job == 'Wizard':
                 projectile = Projectile(self.character)
                 game_world.add_object(projectile, 1)
@@ -465,18 +466,21 @@ class Character:
             skill1 = skill_1(self.x, self.y, self.direction_x, self.job, self.speed)
             game_world.add_object(skill1, 1)
             game_world.add_collision_pair('skill:monster', skill1, None)
+            game_world.add_collision_pair('boss:skill', None,  skill1)
             self.skill1_last_used_time = get_time()
     def Skill_2(self):
         if self.level >= 2:
             skill2 = skill_2(self.x, self.y, self.direction_x, self.job)
             game_world.add_object(skill2, 1)
             game_world.add_collision_pair('skill:monster', skill2, None)
+            game_world.add_collision_pair('boss:skill', None, skill2)
             self.skill2_last_used_time = get_time()
     def Skill_3(self):
         if self.level >= 3:
             skill3 = skill_3(self.x, self.y, self.direction_x, self.job)
             game_world.add_object(skill3, 1)
             game_world.add_collision_pair('skill:monster', skill3, None)
+            game_world.add_collision_pair('boss:skill', None, skill3)
             self.skill3_last_used_time = get_time()
 
     def handle_collision(self, group, other):
