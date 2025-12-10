@@ -201,6 +201,7 @@ class attack:
                 projectile = Projectile(self.character)
                 game_world.add_object(projectile, 1)
                 game_world.add_collision_pair('projectile:monster', projectile, None)
+                game_world.add_collision_pair('boss:hitbox', None, projectile)
 
     def exit(self, e):
         pass
