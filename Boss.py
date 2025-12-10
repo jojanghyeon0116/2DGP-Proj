@@ -60,8 +60,8 @@ class Boss:
         self.x = 600
         self.y = 380
         self.direction = 1
-        self.hp = 10
-        self.max_hp = 10
+        self.hp = 500
+        self.max_hp = 500
         self.attack_object = None
         self.game_clear = False
         if Boss.hp_fill_image is None:

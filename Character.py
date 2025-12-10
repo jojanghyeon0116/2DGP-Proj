@@ -349,13 +349,13 @@ class Character:
         self.direction_x = 0
         self.direction_y = 0
         self.direction = 0
-        self.level = 3
-        self.max_hp = 110
-        self.hp = current_hp if current_hp is not None else 110  # 🌟 전달받은 체력이 있으면 사용, 없으면 110으로 초기화
+        self.level = 0
+        self.max_hp = 100
+        self.hp = current_hp if current_hp is not None else 100
         self.money = current_money if current_money is not None else 0
         self.exp = 0
         self.max_exp = 100
-        self.speed = 1
+        self.speed = 1.0
         self.invincible_time = 0.0
         self.max_invincible_time = 0.5
         self.max_jump_height = 180
