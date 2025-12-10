@@ -57,6 +57,7 @@ def init(job_name, current_hp=None, current_money=None, current_level=None):
     game_world.add_collision_pair('character:back_ground', common.character, boss_stage)
     game_world.add_collision_pair('boss:skill', boss, None)
     game_world.add_collision_pair('boss:hitbox', boss, None)
+    game_world.add_collision_pair('character:attack', common.character, None)
 def update():
     game_world.update()
     game_world.handle_collisions()

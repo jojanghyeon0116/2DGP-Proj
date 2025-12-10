@@ -372,6 +372,7 @@ class Character:
         self.HURT = hurt(self)
         self.DEAD = dead(self)
         self.RUN = run(self)
+        self.game_over = False
         if self.job == 'Swordsman':
             self.state_machine = StateMachine(
                 self.IDLE,
@@ -426,6 +427,10 @@ class Character:
         if self.exp >= self.max_exp:
             self.level += 1
             self.exp -= 100
+        if self.hp <= 0 and not self.game_over:
+            self.state_machine.cur_state = self.DEAD
+            self.DEAD.enter(None)
+            self.game_over = True
     def draw(self):
         self.state_machine.draw()
         draw_rectangle(*self.get_bb())
@@ -504,10 +509,8 @@ class Character:
                 self.state_machine.handle_state_event(('HIT', None))
                 self.hp -= 10
             elif self.hp <= 0 and other.attacking:
-                # 1. DEAD 상태로 강제 전환 (StateMachine 객체 교체)
                 self.state_machine.cur_state = self.DEAD
 
-                # 2. DEAD.enter(None) 호출 (애니메이션 초기화)
                 self.DEAD.enter(None)
         elif group == 'character:platform':
             # 캐릭터의 바닥 좌표 계산: 캐릭터 중심 Y (self.y) - 64
@@ -520,8 +523,6 @@ class Character:
             char_left, _, char_right, _ = self.get_bb()
             if char_right > platform_left and char_left < platform_right:
 
-                # 2. 상단 충돌 조건 (하강 중이고, 캐릭터 바닥이 블록 상단에 가까이 닿았을 때)
-                # platform_top 바로 위에 착지할 만큼 가까운지 확인
                 if self.direction_y <= 0 and char_bottom <= platform_top and char_bottom > platform_top - 10:
 
                     # 🌟 정확한 착지 위치 설정 🌟
@@ -544,4 +545,5 @@ class Character:
                 self.x = ground_right - 32
         elif group == 'character:portal':
             self.can_enter_portal = other
-
+        elif group == 'character:attack':
+            self.state_machine.handle_state_event(('HIT', None))

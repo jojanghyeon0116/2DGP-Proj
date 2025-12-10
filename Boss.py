@@ -20,7 +20,8 @@ class attack_range:
         self.x, self.y = x, y
         self.direction = direction
         self.offset_x = 120 * self.direction
-
+        self.damage = False
+        game_world.add_collision_pair('character:attack', None, self)
     def update(self):
         pass
 
@@ -36,7 +37,10 @@ class attack_range:
         return left, bottom, right, top
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'character:attack':
+            if not self.damage:
+                other.hp -= 50
+                self.damage = True
 
 
 class Boss:
@@ -63,11 +67,11 @@ class Boss:
         self.font = load_font('ENCR10B.TTF', 16)
     def update(self):
         if self.type == 2:
-            if self.attack_object is None and self.frame_x > 0:
+            if self.attack_object is None and self.frame_x >= 10:
                 self.attack_object = attack_range(self.x, self.y, self.direction)
                 game_world.add_object(self.attack_object, 0)
 
-            if int(self.frame_x) >= 14:
+            if int(self.frame_x) >= 11:
                 if self.attack_object is not None:
                     game_world.remove_object(self.attack_object)
                     self.attack_object = None
