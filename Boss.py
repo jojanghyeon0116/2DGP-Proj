@@ -39,7 +39,7 @@ class attack_range:
     def handle_collision(self, group, other):
         if group == 'character:attack':
             if not self.damage:
-                other.hp -= 50
+                #other.hp -= 50
                 self.damage = True
 
 
@@ -49,6 +49,7 @@ class Boss:
     hp_back_image = None
     HP_BAR_WIDTH = 500
     HP_BAR_HEIGHT = 20
+    Skill_cooldown = 3.0
     def __init__(self):
         self.image = load_image('boss/boss_sprite.png')
         self.frame_x = 0
@@ -56,9 +57,9 @@ class Boss:
         self.max_frame = 22
         self.type = 0
         self.frame = 0
-        self.x = 400
+        self.x = 600
         self.y = 380
-        self.direction = 0
+        self.direction = 1
         self.hp = 10
         self.max_hp = 10
         self.attack_object = None
@@ -66,7 +67,18 @@ class Boss:
         if Boss.hp_fill_image is None:
             Boss.hp_fill_image = load_image('UI/health_bar_fill.png')
         self.font = load_font('ENCR10B.TTF', 16)
+        self.skill = None
+        self.skill_timer = 0.0
+        self.is_using_skill = False
     def update(self):
+        if not self.game_clear and not self.is_using_skill and self.type == 0:
+            self.skill_timer += game_framework.frame_time
+
+            if self.skill_timer >= self.Skill_cooldown:
+                self.is_using_skill = True
+                self.type = 5
+                self.frame_x = 0
+                self.skill_timer = 0.0
         if not self.game_clear:
             if self.type == 2:
                 if self.attack_object is None and self.frame_x >= 10:
@@ -83,7 +95,7 @@ class Boss:
                 game_world.remove_object(self.attack_object)
                 self.attack_object = None
             distance = self.x - common.character.x
-            if self.type != 2 and self.type != 3:
+            if self.type != 2 and self.type != 3 and self.type != 5:
                 if abs(distance) < 200:
                     if abs(distance) < 100:
                         self.type = 2
@@ -119,6 +131,18 @@ class Boss:
             self.frame_y = 0
             if int(self.frame_x) >= 22:
                 game_world.remove_object(self)
+        elif self.type == 5:
+            self.frame_x = self.frame_x + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
+            self.frame_y = 320
+            if int(self.frame_x) >= 10 and self.skill is None:
+                self.skill = fire_skill(self.x, self.y, self.direction)
+                game_world.add_object(self.skill, 1)
+
+            if int(self.frame_x) >= 11:
+                self.type = 0
+                self.frame_x = 0
+                self.is_using_skill = False
+                self.skill = None
     def draw(self):
         current_frame = int(self.frame_x)
 
@@ -163,3 +187,28 @@ class Boss:
                 self.type = 4
                 self.frame_x = 0
                 self.game_clear = True
+
+class fire_skill:
+    image = None
+    def __init__(self, x, y, direction):
+        self.x, self.y = x + 50, 180
+        self.direction = direction
+        self.damage = False
+        self.frame_x = 0
+        self.max_frame = 8
+        if fire_skill.image is None:
+            self.image = load_image('boss/boss_skill.png')
+
+    def update(self):
+        self.frame_x = (self.frame_x + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 8
+        self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time * 2
+        if self.x > 1024 or self.x < 0:
+            game_world.remove_object(self)
+            return
+    def draw(self):
+        self.image.clip_draw(int(self.frame_x) * 128, 0, 128, 1024, self.x, self.y, 100, 200)
+    def get_bb(self):
+        return self.x - 25, self.y - 50, self.x + 25, self.y + 50
+
+    def handle_collision(self, group, other):
+        pass
