@@ -66,7 +66,6 @@ class skill_1:
                 self.image.clip_draw(int(self.frame) * 33, 0, 33, 32, self.x, self.y, 50, 50)
             elif self.velocity < 0:
                 self.image.clip_composite_draw(int(self.frame) * 33, 0, 33, 32, 0, 'h', self.x, self.y, 50, 50)
-        draw_rectangle(*self.get_bb())
     def get_bb(self):
         return self.x - 16, self.y - 16, self.x + 16 , self.y + 16
 
@@ -122,7 +121,6 @@ class skill_2:
                 self.image.clip_draw(int(self.frame) * 170, 0, 170, 290, self.x, self.y, 100, 100)
             elif self.velocity < 0:
                 self.image.clip_composite_draw(int(self.frame) * 170, 0, 170, 290, 0, 'h', self.x, self.y, 100, 100)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 16, self.y - 16, self.x + 16, self.y + 16
@@ -175,8 +173,6 @@ class skill_3:
                 self.image.clip_draw(int(self.frame) * 170, 0, 170, 200, self.x, self.y, 70, 70)
             elif self.velocity < 0:
                 self.image.clip_composite_draw(int(self.frame) * 170, 0, 170, 200, 0, 'h', self.x, self.y, 70, 70)
-
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 16, self.y - 16, self.x + 16, self.y + 16

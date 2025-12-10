@@ -180,7 +180,7 @@ class Boss:
         return self.x - 50, self.y - 250, self.x + 50, self.y
 
     def handle_collision(self, group, other):
-        if group == 'boss:skill' or group == 'boss:hitbox':
+        if group == 'boss:skill' or group == 'boss:hitbox' and not self.game_clear:
             game_world.remove_object(other)
             self.type = 3
             self.frame_x = 0
@@ -209,7 +209,6 @@ class fire_skill:
             return
     def draw(self):
         self.image.clip_draw(int(self.frame_x) * 128, 0, 128, 1024, self.x, self.y, 100, 200)
-        draw_rectangle(*self.get_bb())
     def get_bb(self):
         return self.x - 25, self.y - 50, self.x + 25, self.y + 15
 

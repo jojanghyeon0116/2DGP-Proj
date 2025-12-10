@@ -286,8 +286,7 @@ class AttackHitbox:
             game_world.remove_object(self)
 
     def draw(self):
-        # 디버깅용: 충돌 박스 확인 (주석 처리 가능)
-        draw_rectangle(*self.get_bb())
+        pass
 
     def get_bb(self):
         return self.x - 20, self.y - 40, self.x + 20, self.y + 20
@@ -323,7 +322,6 @@ class Projectile:
                 self.image.clip_composite_draw(0, 0, 48, 48, 0, 'h', self.x, self.y, 48, 48)
             elif self.character.job == 'Wizard':
                 self.image.clip_composite_draw(0, 0, 1024, 1024, 0, 'h', self.x, self.y, 48, 48)
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         if self.character.job == 'Archer':
@@ -432,7 +430,6 @@ class Character:
             self.game_over = True
     def draw(self):
         self.state_machine.draw()
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return self.x - 32, self.y - 64, self.x + 32 , self.y + 10

@@ -145,7 +145,6 @@ class Monster:
         elif self.direction == -1:
             self.image.clip_composite_draw(int(self.frame) * 128, 0, 128, 128, 0, 'h', screen_x, self.y, 128, 128)
 
-        draw_rectangle(screen_x - 32, self.y - 64, screen_x + 32, self.y + 10)
 
         if self.hp > 0 and self.hp < self.max_hp:
             hp_bar_center_x = screen_x

@@ -42,8 +42,6 @@ class item:
     def draw(self):
         item.screen_x = self.x - item.camera_offset_x
         self.image.draw(item.screen_x, self.y, 32, 32)
-        draw_rectangle(*self.get_bb())
-
     def get_bb(self):
         return item.screen_x - 16, self.y - 16, item.screen_x + 16, self.y + 16
 

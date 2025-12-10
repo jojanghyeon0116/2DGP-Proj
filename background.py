@@ -45,7 +45,6 @@ class Ground:
 
         # 5. 제한된 좌표로 배경을 그립니다.
         self.image.draw(final_screen_x, self.screen_height // 2.0)
-        draw_rectangle(*self.get_bb())
     def get_bb(self):
         return 0, 0, self.screen_width, self.screen_height
 
@@ -222,7 +221,6 @@ class Shop:
             self.screen_width,  # 강제 너비 (1024)
             self.screen_height  # 강제 높이 (800)
         )
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return 0, 0, self.screen_width, self.screen_height
@@ -275,7 +273,6 @@ class Boss_stage:
             self.screen_width,  # 강제 너비 (1024)
             self.screen_height  # 강제 높이 (800)
         )
-        draw_rectangle(*self.get_bb())
 
     def get_bb(self):
         return 0, 0, self.screen_width, self.screen_height
