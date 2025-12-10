@@ -22,7 +22,7 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             center_x, center_y = get_canvas_width() // 2, get_canvas_height() // 2
-            if center_x - 50 < event.x < center_x + 50 and center_y - 50 < event.y < center_y + 50:
+            if center_x - 200 < event.x < center_x + 100 and center_y - 100 < event.y < center_y + 200:
                 game_framework.push_mode(Shop_window)
         else:
             common.character.handle_event(event)
