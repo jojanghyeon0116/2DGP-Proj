@@ -65,7 +65,6 @@ class Monster:
             elif distance_x_world < 0:
                 self.direction = -1
 
-                # 🏃 추적 시작/멈춤 판단: 화면 상의 거리를 사용합니다.
             if abs(distance_x_screen) < 100 and not self.walking and not self.attacking:
                 self.walking = True
                 self.image = load_image('Skeleton/Run.png')
@@ -73,8 +72,6 @@ class Monster:
                 self.walking = False
                 self.image = load_image('Skeleton/Idle.png')
 
-                # 🏃 몬스터 이동: 월드 좌표(self.x)를 변경하여 이동합니다.
-                # 몬스터의 이동 방향은 distance_x_world를 따릅니다.
             if abs(distance_x_screen) < 100 and self.walking:
                 self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
 
