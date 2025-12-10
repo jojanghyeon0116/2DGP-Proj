@@ -59,42 +59,50 @@ class Monster:
                 game_world.add_object(new_item, 1)
                 game_world.add_collision_pair('character:item', None, new_item)
                 game_world.remove_object(self)
-        if self.hit:
+                return
+        elif self.hit:
             self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time * 2
 
-            if self.frame >= 3:
+            if int(self.frame) >= 3:
                 self.hit = False
+                self.frame = 0
+                self.attacking = False
+                self.walking = False
                 self.image = load_image('Skeleton/Idle.png')
-
+                return
         else:
-            if distance_x_world > 0:
+            if distance_x_screen > 0:
                 self.direction = 1
-            elif distance_x_world < 0:
+            elif distance_x_screen < 0:
                 self.direction = -1
 
-            if abs(distance_x_screen) < 100 and not self.walking and not self.attacking:
-                self.walking = True
-                self.image = load_image('Skeleton/Run.png')
-            elif abs(distance_x_screen) >= 100 and self.walking:
-                self.walking = False
-                self.image = load_image('Skeleton/Idle.png')
-
-            if abs(distance_x_screen) < 100 and self.walking:
-                self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
-
-            if abs(distance_x_screen) < 50 and not self.attacking:
-                self.attacking = True
-                self.walking = False
-                self.image = load_image('Skeleton/Attack_1.png')
-            elif abs(distance_x_screen) >= 50 and self.attacking:
-                self.attacking = False
-                # 공격 후 상태 전환
-                if abs(distance_x_screen) >= 100:
+            if abs(distance_x_screen) < 100:
+                if abs(distance_x_screen) < 50 and not self.attacking:
+                    self.attacking = True
                     self.walking = False
-                    self.image = load_image('Skeleton/Idle.png')
-                else:
+                    self.frame = 0
+                    self.image = load_image('Skeleton/Attack_1.png')
+                elif abs(distance_x_screen) >= 50 and self.attacking:
+                    self.attacking = False
+                    if abs(distance_x_screen) >= 100:
+                        self.walking = False
+                        self.frame = 0
+                        self.image = load_image('Skeleton/Idle.png')
+                    else:
+                        self.walking = True
+                        self.frame = 0
+                        self.image = load_image('Skeleton/Run.png')
+                elif not self.walking and not self.attacking:
                     self.walking = True
+                    self.frame = 0
                     self.image = load_image('Skeleton/Run.png')
+                if self.walking:
+                    self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
+            else:
+                self.frame = 0
+                self.walking = False
+                self.attacking = False
+                self.image = load_image('Skeleton/Idle.png')
 
     def draw(self):
         global camera_offset_x
