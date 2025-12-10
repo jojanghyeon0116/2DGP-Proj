@@ -48,16 +48,16 @@ class item:
     def handle_collision(self, group, other):
         if group == 'character:item':
             if self.type == 0:
-                other.hp += 20
-                print(f'Hp : {other.hp}')
+                if other.hp >= other.max_hp:
+                    return
+                else:
+                    other.hp += 10
             elif self.type == 1:
                 other.money += 100
-                print(f'Money : {other.money}')
             elif self.type == 2:
-                other.exp += 10
-                print(f'Exp : {other.exp}')
+                other.exp += 50
             elif self.type == 3:
                 other.attack_damage += 5
             elif self.type == 4:
-                other.speed += 1
+                other.speed += 0.1
             game_world.remove_object(self)
