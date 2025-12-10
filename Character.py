@@ -410,11 +410,9 @@ class Character:
         if self.direction_y != 0:
             self.y += self.direction_y * RUN_SPEED_PPS * game_framework.frame_time
 
-                # 2. 최고점 도달 확인 (점프 상한선)
         if self.y >= self.jump_peak_y and self.direction_y == 1:
-            self.direction_y = -1  # 하강 시작
+            self.direction_y = -1
 
-                # 3. 지면(y=220) 착지 처리
         if self.y < self.min_y:
             self.y = self.min_y
             self.direction_y = 0
@@ -457,6 +455,8 @@ class Character:
             if self.level >= 2 and current_time - self.skill2_last_used_time >= SKILL_2_COOLTIME:
                 self.Skill_2()
                 self.state_machine.handle_state_event(('INPUT', event))
+                if self.job == 'Swordsman':
+                    self.hp += 40
                 return
         if z_down(('INPUT', event)):
             skill_used = True
@@ -515,23 +515,18 @@ class Character:
         elif group == 'character:platform':
             char_bottom = self.y - 64
 
-            # other (Platform)의 BB 가져오기
             platform_left, platform_bottom, platform_right, platform_top = other.get_bb()
 
-            # 1. 수평 범위 확인
             char_left, _, char_right, _ = self.get_bb()
             if char_right > platform_left and char_left < platform_right:
 
                 if self.direction_y <= 0 and char_bottom <= platform_top and char_bottom > platform_top - 10:
 
-                    # 🌟 정확한 착지 위치 설정 🌟
-                    # 새로운 Y 좌표 = 블록 상단 + 캐릭터 바닥에서 중심까지의 거리 (64)
                     new_y = platform_top + 64
 
                     self.y = new_y
-                    self.direction_y = 0  # 🌟 수직 속도를 0으로 멈춤 (블록 위에 고정)
+                    self.direction_y = 0
 
-                    # 🌟 착지 애니메이션 전환
                     if self.state_machine.cur_state == self.JUMP:
                         self.state_machine.handle_state_event(('FINISH', None))
 
