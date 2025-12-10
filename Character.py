@@ -341,7 +341,7 @@ SKILL_3_COOLTIME = 10.0
 
 class Character:
     image = None
-    def __init__(self, job, x = 400,y = 220,current_hp=None, current_money=None):
+    def __init__(self, job, x = 400,y = 220,current_hp=None, current_money=None, current_level=None, current_exp=None):
         self.job = job
         self.x, self.y = x, y
         self.min_y = y
@@ -349,11 +349,11 @@ class Character:
         self.direction_x = 0
         self.direction_y = 0
         self.direction = 0
-        self.level = 0
+        self.level = current_level if current_level is not None else 0
         self.max_hp = 100
         self.hp = current_hp if current_hp is not None else 100
         self.money = current_money if current_money is not None else 0
-        self.exp = 0
+        self.exp = current_exp if current_exp is not None else 0
         self.max_exp = 100
         self.speed = 1.0
         self.invincible_time = 0.0
@@ -361,7 +361,7 @@ class Character:
         self.max_jump_height = 180
         self.jump_peak_y = 0
         self.knockback_distance = 0
-        self.attack_damage = 10
+        self.attack_damage = 50
         self.can_enter_portal = None
         self.skill1_last_used_time = 0.0
         self.skill2_last_used_time = 0.0
@@ -440,7 +440,7 @@ class Character:
         if up_down(('INPUT', event)) and self.can_enter_portal is not None:
             next_mode = self.can_enter_portal.next_stage_mode
             if next_mode:
-                game_framework.change_mode(next_mode, self.job, self.hp, self.money, self.level)
+                game_framework.change_mode(next_mode, self.job, self.hp, self.money, self.level, self.exp)
                 return
         current_time = get_time()
         skill_used = False
@@ -492,7 +492,6 @@ class Character:
         if group == 'character:monster':
             is_dashing = self.state_machine.cur_state == self.RUN and self.RUN.dash
             if is_dashing:
-                # 몬스터와 충돌 시 돌진 중단 및 IDLE 상태로 전환
                 self.RUN.dash = False
                 self.RUN.max_distance = 0
                 self.direction_x = 0

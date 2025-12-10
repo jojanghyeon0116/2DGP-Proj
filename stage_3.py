@@ -23,12 +23,12 @@ def handle_events():
         else:
             common.character.handle_event(event)
 
-def init(job_name, current_hp=None, current_money=None, current_level=None):
+def init(job_name, current_hp=None, current_money=None, current_level=None, current_exp=None):
     global running
     global platform
 
     running = True
-    common.character = Character(job_name, 400, 200, current_hp=current_hp, current_money=current_money)
+    common.character = Character(job_name, 400, 200, current_hp=current_hp, current_money=current_money, current_level=current_level, current_exp=current_exp)
     game_world.add_object(common.character, 1)
 
     boss_stage = Boss_stage(common.character)

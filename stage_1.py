@@ -25,7 +25,7 @@ def handle_events():
             common.character.handle_event(event)
 
 
-def init(job_name, current_hp=None, current_money=None, current_level=None):
+def init(job_name, current_hp=None, current_money=None, current_level=None, current_exp=None):
     global running
     global platform
     global health_bar
@@ -33,7 +33,7 @@ def init(job_name, current_hp=None, current_money=None, current_level=None):
 
     # -------------------------------------------------------------
     # 1. 캐릭터 및 배경 설정
-    common.character = Character(job_name, 200, 220, current_hp=current_hp, current_money=current_money)
+    common.character = Character(job_name, 200, 220, current_hp=current_hp, current_money=current_money, current_level=current_level, current_exp=current_exp)
     game_world.add_object(common.character, 1)
 
     back_ground = Ground(common.character)

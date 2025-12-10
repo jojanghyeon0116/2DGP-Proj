@@ -1,4 +1,6 @@
 from pico2d import load_image, draw_rectangle
+
+import common
 import game_framework
 import game_world
 
@@ -51,13 +53,13 @@ class item:
                 if other.hp >= other.max_hp:
                     return
                 else:
-                    other.hp += 10
+                    common.character.hp += 10
             elif self.type == 1:
-                other.money += 100
+                common.character.money += 100
             elif self.type == 2:
-                other.exp += 50
+                common.character.exp += 50
             elif self.type == 3:
-                other.attack_damage += 5
+                common.character.attack_damage += 5
             elif self.type == 4:
-                other.speed += 0.1
+                common.character.speed += 0.1
             game_world.remove_object(self)
