@@ -14,10 +14,8 @@ ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 
 
 class attack_range:
-    # 히트박스의 크기 설정
     ATTACK_WIDTH = 150
     ATTACK_HEIGHT = 250
-
     def __init__(self, x, y, direction):
         self.x, self.y = x, y
         self.direction = direction
@@ -43,7 +41,10 @@ class attack_range:
 
 class Boss:
     image = None
-
+    hp_fill_image = None
+    hp_back_image = None
+    HP_BAR_WIDTH = 500
+    HP_BAR_HEIGHT = 20
     def __init__(self):
         self.image = load_image('boss/boss_sprite.png')
         self.frame_x = 0
@@ -54,9 +55,12 @@ class Boss:
         self.x = 400
         self.y = 380
         self.direction = 0
-
+        self.hp = 1000
+        self.max_hp = 1000
         self.attack_object = None
-
+        if Boss.hp_fill_image is None:
+            Boss.hp_fill_image = load_image('UI/health_bar_fill.png')
+        self.font = load_font('ENCR10B.TTF', 16)
     def update(self):
         if self.type == 2:
             if self.attack_object is None and self.frame_x > 0:
@@ -69,7 +73,9 @@ class Boss:
                     self.attack_object = None
                     self.type = 0
                     self.frame_x = 0
-
+        if self.attack_object is not None and self.type != 2:
+            game_world.remove_object(self.attack_object)
+            self.attack_object = None
         distance = self.x - common.character.x
 
         if self.type != 2 and self.type != 3:
@@ -112,7 +118,28 @@ class Boss:
             self.image.clip_composite_draw(current_frame * 288, self.frame_y, 288, 160, 0, 'h', self.x, self.y, 500,
                                            500)
         draw_rectangle(*self.get_bb())
+        if self.hp > 0:
+            hp_bar_center_x = 512
+            hp_bar_center_y = 700
+            hp_ratio = self.hp / self.max_hp
 
+            pico2d.draw_rectangle(
+                hp_bar_center_x - self.HP_BAR_WIDTH / 2,
+                hp_bar_center_y - self.HP_BAR_HEIGHT / 2,
+                hp_bar_center_x + self.HP_BAR_WIDTH / 2,
+                hp_bar_center_y + self.HP_BAR_HEIGHT / 2
+            )
+
+            fill_width = self.HP_BAR_WIDTH * hp_ratio
+            fill_x = hp_bar_center_x - (self.HP_BAR_WIDTH - fill_width) / 2
+
+            self.hp_fill_image.clip_draw(
+                0, 0, self.hp_fill_image.w, self.hp_fill_image.h,
+                fill_x, hp_bar_center_y,
+                fill_width, self.HP_BAR_HEIGHT
+            )
+            self.font.draw(hp_bar_center_x - 50, hp_bar_center_y, f'{self.hp} / {self.max_hp}', (255, 255, 255))
+            self.font.draw(hp_bar_center_x - 25, hp_bar_center_y + 20, f'Boss', (255, 255, 255))
     def get_bb(self):
         return self.x - 50, self.y - 250, self.x + 50, self.y
 
@@ -121,3 +148,4 @@ class Boss:
             game_world.remove_object(other)
             self.type = 3
             self.frame_x = 0
+            self.hp -= other.damage
