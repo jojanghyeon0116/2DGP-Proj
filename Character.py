@@ -547,3 +547,7 @@ class Character:
             self.can_enter_portal = other
         elif group == 'character:attack':
             self.state_machine.handle_state_event(('HIT', None))
+            self.knockback_distance = other.direction
+        elif group == 'character:boss_skill':
+            self.state_machine.handle_state_event(('HIT', None))
+            self.knockback_distance = other.direction

@@ -137,7 +137,7 @@ class Boss:
             if int(self.frame_x) >= 10 and self.skill is None:
                 self.skill = fire_skill(self.x, self.y, self.direction)
                 game_world.add_object(self.skill, 1)
-
+                game_world.add_collision_pair('character:boss_skill', None, self.skill)
             if int(self.frame_x) >= 11:
                 self.type = 0
                 self.frame_x = 0
@@ -207,8 +207,11 @@ class fire_skill:
             return
     def draw(self):
         self.image.clip_draw(int(self.frame_x) * 128, 0, 128, 1024, self.x, self.y, 100, 200)
+        draw_rectangle(*self.get_bb())
     def get_bb(self):
-        return self.x - 25, self.y - 50, self.x + 25, self.y + 50
+        return self.x - 25, self.y - 50, self.x + 25, self.y + 15
 
     def handle_collision(self, group, other):
-        pass
+        if group == 'character:boss_skill':
+            other.hp -= 10
+            game_world.remove_object(self)
