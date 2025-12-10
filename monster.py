@@ -16,7 +16,11 @@ RUN_SPEED_MPS = (RUN_SPEED_MPM / 60.0)
 RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 class Monster:
-    image = None
+    IMAGE_IDLE = None
+    IMAGE_RUN = None
+    IMAGE_ATTACK = None
+    IMAGE_HURT = None
+    IMAGE_DEAD = None
     hp_fill_image = None
     hp_back_image = None
     HP_BAR_WIDTH = 80
@@ -35,10 +39,16 @@ class Monster:
         self.max_hp = 100
         self.hit = False
         self.knockback_timer = 0.0
-        if self.image is None:
-            self.image = load_image('Skeleton/Idle.png')
         if Monster.hp_fill_image is None:
             Monster.hp_fill_image = load_image('UI/health_bar_fill.png')
+        if Monster.IMAGE_IDLE is None:
+            Monster.IMAGE_IDLE = load_image('Skeleton/Idle.png')
+            Monster.IMAGE_RUN = load_image('Skeleton/Run.png')
+            Monster.IMAGE_ATTACK = load_image('Skeleton/Attack_1.png')
+            Monster.IMAGE_HURT = load_image('Skeleton/Hurt.png')
+            Monster.IMAGE_DEAD = load_image('Skeleton/Dead.png')
+            Monster.hp_fill_image = load_image('UI/health_bar_fill.png')
+        self.image = Monster.IMAGE_IDLE
     def update(self):
         global camera_offset_x
         self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 7
@@ -68,7 +78,7 @@ class Monster:
                 self.frame = 0
                 self.attacking = False
                 self.walking = False
-                self.image = load_image('Skeleton/Idle.png')
+                self.image = Monster.IMAGE_IDLE
                 return
         else:
             if distance_x_screen > 0:
@@ -81,28 +91,28 @@ class Monster:
                     self.attacking = True
                     self.walking = False
                     self.frame = 0
-                    self.image = load_image('Skeleton/Attack_1.png')
+                    self.image = Monster.IMAGE_ATTACK
                 elif abs(distance_x_screen) >= 50 and self.attacking:
                     self.attacking = False
                     if abs(distance_x_screen) >= 100:
                         self.walking = False
                         self.frame = 0
-                        self.image = load_image('Skeleton/Idle.png')
+                        self.image = Monster.IMAGE_IDLE
                     else:
                         self.walking = True
                         self.frame = 0
-                        self.image = load_image('Skeleton/Run.png')
+                        self.image = Monster.IMAGE_RUN
                 elif not self.walking and not self.attacking:
                     self.walking = True
                     self.frame = 0
-                    self.image = load_image('Skeleton/Run.png')
+                    self.image = Monster.IMAGE_RUN
                 if self.walking:
                     self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
             else:
                 self.frame = 0
                 self.walking = False
                 self.attacking = False
-                self.image = load_image('Skeleton/Idle.png')
+                self.image = Monster.IMAGE_IDLE
 
     def draw(self):
         global camera_offset_x
@@ -150,26 +160,26 @@ class Monster:
                 self.frame = 0
                 self.hit = True
                 self.knockback_timer = 0.2
-                self.image = load_image('Skeleton/Hurt.png')
+                self.image = Monster.IMAGE_HURT
                 self.hp -= other.damage
                 if self.hp <= 0:
-                    self.image = load_image('Skeleton/Dead.png')
+                    self.image = Monster.IMAGE_DEAD
 
         elif group == 'skill:monster':
             self.hit = True
             self.direction = other.velocity
             self.knockback_timer = 0.2
             self.frame = 0
-            self.image = load_image('Skeleton/Hurt.png')
+            self.image = Monster.IMAGE_HURT
             self.hp -= other.damage
             if self.hp <= 0:
-                self.image = load_image('Skeleton/Dead.png')
+                self.image = Monster.IMAGE_DEAD
         elif group == 'projectile:monster':
             self.direction = other.direction_x
             self.hit = True
             self.knockback_timer = 0.2
             self.frame = 0
-            self.image = load_image('Skeleton/Hurt.png')
+            self.image = Monster.IMAGE_HURT
             self.hp -= other.damage
             if self.hp <= 0:
-                self.image = load_image('Skeleton/Dead.png')
+                self.image = Monster.IMAGE_DEAD
