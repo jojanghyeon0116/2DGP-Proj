@@ -17,6 +17,12 @@ RUN_SPEED_PPS = (RUN_SPEED_MPS * PIXEL_PER_METER)
 
 class Monster:
     image = None
+    hp_fill_image = None
+    hp_back_image = None
+    HP_BAR_WIDTH = 80
+    HP_BAR_HEIGHT = 10
+    HP_BAR_OFFSET_Y = 15
+
     def __init__(self, characters_obj):
         self.x, self.y = 600, 220
         self.frame = 0
@@ -26,12 +32,13 @@ class Monster:
         self.target = characters_obj
         self.max_frame = 7
         self.hp = 100
+        self.max_hp = 100
         self.hit = False
         self.knockback_timer = 0.0
         if self.image is None:
             self.image = load_image('Skeleton/Idle.png')
-        pass
-
+        if Monster.hp_fill_image is None:
+            Monster.hp_fill_image = load_image('UI/health_bar_fill.png')
     def update(self):
         global camera_offset_x
         self.frame = (self.frame + self.max_frame * ACTION_PER_TIME * game_framework.frame_time) % 7
@@ -75,7 +82,6 @@ class Monster:
             if abs(distance_x_screen) < 100 and self.walking:
                 self.x += self.direction * RUN_SPEED_PPS * game_framework.frame_time
 
-                # ⚔️ 공격 시작 판단: 화면 상의 거리를 사용합니다.
             if abs(distance_x_screen) < 50 and not self.attacking:
                 self.attacking = True
                 self.walking = False
@@ -94,13 +100,32 @@ class Monster:
         global camera_offset_x
         screen_x = self.x - camera_offset_x
         if self.direction == 1:
-            # 화면 좌표 (screen_x)를 사용
             self.image.clip_draw(int(self.frame) * 128, 0, 128, 128, screen_x, self.y)
         elif self.direction == -1:
-            # 화면 좌표 (screen_x)를 사용
             self.image.clip_composite_draw(int(self.frame) * 128, 0, 128, 128, 0, 'h', screen_x, self.y, 128, 128)
+
         draw_rectangle(screen_x - 32, self.y - 64, screen_x + 32, self.y + 10)
 
+        if self.hp > 0 and self.hp < self.max_hp:
+            hp_bar_center_x = screen_x
+            hp_bar_center_y = self.y + self.HP_BAR_OFFSET_Y
+            hp_ratio = self.hp / self.max_hp
+
+            pico2d.draw_rectangle(
+                hp_bar_center_x - self.HP_BAR_WIDTH / 2,
+                hp_bar_center_y - self.HP_BAR_HEIGHT / 2,
+                hp_bar_center_x + self.HP_BAR_WIDTH / 2,
+                hp_bar_center_y + self.HP_BAR_HEIGHT / 2
+            )
+
+            fill_width = self.HP_BAR_WIDTH * hp_ratio
+            fill_x = hp_bar_center_x - (self.HP_BAR_WIDTH - fill_width) / 2
+
+            self.hp_fill_image.clip_draw(
+                0, 0, self.hp_fill_image.w, self.hp_fill_image.h,
+                fill_x, hp_bar_center_y,
+                fill_width, self.HP_BAR_HEIGHT
+            )
     def get_bb(self, offset_x=None):
         global camera_offset_x
         screen_x = self.x - camera_offset_x
