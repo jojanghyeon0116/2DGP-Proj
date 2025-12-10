@@ -2,6 +2,7 @@ from pico2d import *
 import common
 import game_framework
 import game_world
+import Game_clear
 
 PIXEL_PER_METER = (10.0 / 0.3)  # 10 pixel 30 cm
 RUN_SPEED_KMPH = 10.0  # Km / Hour
@@ -131,6 +132,7 @@ class Boss:
             self.frame_y = 0
             if int(self.frame_x) >= 22:
                 game_world.remove_object(self)
+                game_framework.push_mode(Game_clear)
         elif self.type == 5:
             self.frame_x = self.frame_x + self.max_frame * ACTION_PER_TIME * game_framework.frame_time
             self.frame_y = 320
